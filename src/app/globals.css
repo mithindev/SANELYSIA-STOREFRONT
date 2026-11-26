@@ -68,21 +68,92 @@ body {
 }
 
 /* Reference peach/champagne highlighter stroke under 'naturally.' */
+.marker,
 .editorial-highlight {
   position: relative;
   display: inline-block;
   isolation: isolate;
+  z-index: 0;
+  white-space: nowrap;
 }
 
+.marker::after,
 .editorial-highlight::after {
   content: "";
   position: absolute;
-  left: -2px;
-  right: -4px;
-  bottom: 8px;
-  height: 16px;
-  background-color: #F5D5B8;
   z-index: -1;
+  left: -0.04em;
+  right: -0.04em;
+  height: 0.26em;
+  bottom: 0.04em;
+  background-color: var(--color-brand-highlight, #F5D5B8);
   border-radius: 1px;
-  transform: rotate(-0.5deg);
+  transform: rotate(-1.5deg);
+}
+
+/* Inset frame border for still image */
+.inset-frame {
+  outline: 1px solid rgba(61, 39, 29, 0.15);
+  outline-offset: -10px;
+}
+
+/* Hero Collage Architecture */
+.hero-collage {
+  height: 530px;
+  position: relative;
+  width: 100%;
+}
+
+.hero-still {
+  position: absolute;
+  width: 83%;
+  height: 66%;
+  right: 0;
+  top: 0;
+  border-radius: 2px;
+}
+
+.hero-portrait {
+  position: absolute;
+  width: 46%;
+  height: 67%;
+  bottom: 0;
+  left: 0;
+  border: 7px solid var(--color-bg-primary, #FAF7F2);
+  border-radius: 2px;
+  z-index: 10;
+}
+
+.hero-backdrop {
+  position: absolute;
+  right: 20px;
+  top: 20px;
+  width: 83%;
+  height: 66%;
+  background: var(--color-bg-secondary, #F3ECE2);
+  border: 1px solid var(--color-border-subtle, #E7DDD2);
+  border-radius: 2px;
+}
+
+.hero-note {
+  position: absolute;
+  right: 8px;
+  bottom: 22px;
+  width: 46%;
+  background: var(--color-bg-surface, #FFFDF9);
+  border: 1px solid var(--color-border-subtle, #E7DDD2);
+  padding: 17px;
+  border-radius: 2px;
+  z-index: 20;
+}
+
+@media (max-width: 767px) {
+  .hero-collage {
+    height: 430px;
+    margin-top: 18px;
+  }
+  .hero-note {
+    padding: 12px;
+    bottom: 15px;
+  }
 }

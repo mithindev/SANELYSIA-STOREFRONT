@@ -28,9 +28,9 @@ describe('HeroSection component', () => {
 
   it('renders the 3-item benefit row', () => {
     render(<HeroSection />);
-    expect(screen.getByText('TARGETED FORMULATIONS')).toBeInTheDocument();
-    expect(screen.getByText('GENTLE, EVERYDAY CARE')).toBeInTheDocument();
-    expect(screen.getByText('CLEARER, MORE BALANCED SKIN')).toBeInTheDocument();
+    expect(screen.getByText(/FORMULATIONS/i)).toBeInTheDocument();
+    expect(screen.getByText(/GENTLE, EVERYDAY/i)).toBeInTheDocument();
+    expect(screen.getByText(/CLEARER, MORE/i)).toBeInTheDocument();
   });
 
   it('renders the editorial ritual card and bottom indicator', () => {

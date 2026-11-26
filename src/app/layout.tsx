@@ -3,6 +3,9 @@ import { Cormorant_Garamond, Inter } from 'next/font/google';
 import './globals.css';
 import { AnnouncementBar } from '@/components/layout/announcement-bar';
 import { Header } from '@/components/layout/header';
+import { Footer } from '@/components/layout/footer';
+import { CartProvider } from '@/components/cart/cart-context';
+import { CartDrawer } from '@/components/cart/cart-drawer';
 
 const cormorant = Cormorant_Garamond({
   subsets: ['latin'],
@@ -14,7 +17,7 @@ const cormorant = Cormorant_Garamond({
 
 const inter = Inter({
   subsets: ['latin'],
-  weight: ['300', '400', '500', '600'],
+  weight: ['300', '400', '500', '600', '700'],
   variable: '--font-inter',
   display: 'swap',
 });
@@ -58,17 +61,8 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'SAN ELYSIA — Thoughtful Skincare',
-    description: 'Science-informed skincare. Feel balanced. Glow naturally.',
+    description: 'Feel balanced. Glow naturally. Premium science-informed formulations.',
     images: ['/images/products/san-elysia-serum.jpg'],
-  },
-  icons: {
-    icon: '/images/brand/san-elysia-symbol-chocolate.svg',
-    shortcut: '/images/brand/san-elysia-symbol-chocolate.svg',
-    apple: '/images/brand/san-elysia-symbol-chocolate.svg',
-  },
-  robots: {
-    index: true,
-    follow: true,
   },
 };
 
@@ -87,11 +81,15 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${cormorant.variable} ${inter.variable}`}>
       <body className="min-h-screen flex flex-col font-sans bg-[#FAF7F2] text-[#3D271D] selection:bg-[#F5D5B8] selection:text-[#3D271D]">
-        <AnnouncementBar />
-        <Header bagItemCount={0} />
-        <main id="main-content" className="flex-1">
-          {children}
-        </main>
+        <CartProvider>
+          <AnnouncementBar />
+          <Header />
+          <main id="main-content" className="flex-1">
+            {children}
+          </main>
+          <Footer />
+          <CartDrawer />
+        </CartProvider>
       </body>
     </html>
   );

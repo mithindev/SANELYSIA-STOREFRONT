@@ -3,7 +3,7 @@ import { spawn } from 'node:child_process';
 import * as path from 'node:path';
 import * as fs from 'node:fs';
 
-const ARTIFACT_DIR = '/Users/mithindev/.gemini/antigravity/brain/875709b0-da2d-405c-908d-f95df4cc5c3c';
+const ARTIFACT_DIR = '/Users/mithindev/.gemini/antigravity/brain/968aaf12-0f27-4e85-a2a7-9d9bdbc8f5e3';
 const PORT = 3099;
 const BASE_URL = `http://localhost:${PORT}`;
 
@@ -13,6 +13,8 @@ const VIEWPORTS = [
   { name: 'tablet-768', width: 768, height: 1024 },
   { name: 'desktop-1024', width: 1024, height: 768 },
   { name: 'desktop-1440', width: 1440, height: 900 },
+  { name: 'desktop-1680', width: 1680, height: 1050 },
+  { name: 'desktop-1920', width: 1920, height: 1080 },
 ];
 
 async function run() {

@@ -5,13 +5,18 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { User, ShoppingBag, Menu, X, ArrowUpRight } from 'lucide-react';
 import { Container } from '@/components/ui/container';
+import { useCart } from '@/components/cart/cart-context';
 
 interface HeaderProps {
   bagItemCount?: number;
 }
 
-export function Header({ bagItemCount = 0 }: HeaderProps) {
+export function Header({ bagItemCount }: HeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
+  const cart = useCart();
+
+  // If bagItemCount prop is explicitly provided, use it; otherwise use dynamic context count
+  const displayCount = bagItemCount !== undefined ? bagItemCount : cart.itemCount;
 
   // Close mobile drawer on escape
   React.useEffect(() => {
@@ -31,10 +36,10 @@ export function Header({ bagItemCount = 0 }: HeaderProps) {
   }, [mobileMenuOpen]);
 
   const navLinks = [
-    { label: 'SHOP', href: '#shop' },
-    { label: 'THE FORMULA', href: '#formula' },
-    { label: 'SKIN JOURNAL', href: '#journal' },
-    { label: 'OUR PHILOSOPHY', href: '#philosophy' },
+    { label: 'SHOP', href: '/shop' },
+    { label: 'THE FORMULA', href: '/ingredients' },
+    { label: 'SKIN JOURNAL', href: '/journal' },
+    { label: 'OUR PHILOSOPHY', href: '/#philosophy' },
   ];
 
   return (
@@ -84,34 +89,35 @@ export function Header({ bagItemCount = 0 }: HeaderProps) {
         </nav>
 
         {/* Right: Utility actions */}
-        <div className="flex items-center gap-5 sm:gap-7">
+        <div className="flex items-center gap-3 sm:gap-4">
           {/* Find Your Ritual link */}
           <Link
-            href="#ritual"
-            className="hidden sm:inline-flex items-center gap-1 font-sans text-xs font-semibold tracking-[0.16em] uppercase text-[#3D271D] border-b border-[#3D271D] pb-0.5 hover:text-[#5A3825] hover:border-[#5A3825] transition-colors"
+            href="/quiz"
+            className="hidden sm:inline-flex items-center gap-1 font-sans text-xs font-semibold tracking-[0.16em] uppercase text-[#3D271D] border-b border-[#3D271D] pb-0.5 hover:text-[#5A3825] hover:border-[#5A3825] transition-colors mr-2"
           >
             FIND YOUR RITUAL
           </Link>
 
           {/* Account Icon */}
           <Link
-            href="#account"
+            href="/policies"
             aria-label="Customer Account"
-            className="text-[#3D271D] hover:text-[#5A3825] transition-colors p-1 focus-visible:ring-2 focus-visible:ring-[#5A3825]"
+            className="flex h-11 w-11 items-center justify-center text-[#3D271D] hover:text-[#5A3825] transition-colors focus-visible:ring-2 focus-visible:ring-[#5A3825]"
           >
             <User className="w-5 h-5 stroke-[1.6]" />
           </Link>
 
-          {/* Bag Icon with item count */}
+          {/* Bag Icon with item count & distinct outlined frame matching reference */}
           <button
             type="button"
-            aria-label={`Shopping Bag (${bagItemCount} items)`}
-            className="relative text-[#3D271D] hover:text-[#5A3825] transition-colors p-1 cursor-pointer focus-visible:ring-2 focus-visible:ring-[#5A3825]"
+            onClick={cart.toggleCart}
+            aria-label={`Shopping Bag (${displayCount} items)`}
+            className="relative flex h-11 w-11 items-center justify-center rounded-sm border border-[#3D271D]/20 text-[#3D271D] hover:bg-[#F3ECE2] transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-[#5A3825]"
           >
             <ShoppingBag className="w-5 h-5 stroke-[1.6]" />
-            {bagItemCount > 0 && (
-              <span className="absolute -top-1 -right-1.5 min-w-[17px] h-[17px] px-1 rounded-full bg-[#5A3825] text-[#FAF7F2] text-[10px] font-sans font-medium flex items-center justify-center">
-                {bagItemCount}
+            {displayCount > 0 && (
+              <span className="absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] px-1 rounded-full bg-[#5A3825] text-[#FAF7F2] text-[9.5px] font-sans font-medium flex items-center justify-center">
+                {displayCount}
               </span>
             )}
           </button>
@@ -154,7 +160,7 @@ export function Header({ bagItemCount = 0 }: HeaderProps) {
             ))}
 
             <Link
-              href="#ritual"
+              href="/quiz"
               onClick={() => setMobileMenuOpen(false)}
               className="inline-flex items-center justify-between font-sans text-sm font-semibold tracking-[0.16em] uppercase text-[#5A3825] py-3 mt-4"
             >
