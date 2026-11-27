@@ -3,7 +3,7 @@
 import * as React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { X, Minus, Plus, Trash2, ArrowRight, ShoppingBag, Sparkles } from 'lucide-react';
+import { X, Minus, Plus, Trash2, ArrowRight, ShoppingBag } from 'lucide-react';
 import { useCart } from './cart-context';
 import { Button } from '@/components/ui/button';
 import { formatPaise } from '@/lib/utils/cn';
@@ -76,8 +76,7 @@ export function CartDrawer() {
             {/* Free shipping threshold bar */}
             <div className="mt-4 p-3 bg-[#F3ECE2] border border-[#E7DDD2] rounded-xs text-xs">
               <div className="flex items-center justify-between text-[11px] text-[#3D271D] font-medium mb-1.5">
-                <span className="flex items-center gap-1.5">
-                  <Sparkles size={13} className="text-[#C3A27B]" />
+                <span>
                   {remainingForFreeShipping === 0
                     ? 'Complimentary insured shipping unlocked!'
                     : `Add ${formatPaise(remainingForFreeShipping)} more for free delivery`}

@@ -19,7 +19,7 @@ describe('HeroSection component', () => {
   it('renders both primary and secondary call-to-action buttons', () => {
     render(<HeroSection />);
     expect(
-      screen.getByRole('button', { name: /SHOP THE BALANCING SERUM/i })
+      screen.getByRole('button', { name: /EXPLORE THE COLLECTION/i })
     ).toBeInTheDocument();
     expect(
       screen.getByRole('button', { name: /FIND YOUR RITUAL/i })
@@ -28,15 +28,15 @@ describe('HeroSection component', () => {
 
   it('renders the 3-item benefit row', () => {
     render(<HeroSection />);
-    expect(screen.getByText(/FORMULATIONS/i)).toBeInTheDocument();
-    expect(screen.getByText(/GENTLE, EVERYDAY/i)).toBeInTheDocument();
-    expect(screen.getByText(/CLEARER, MORE/i)).toBeInTheDocument();
+    expect(screen.getByText(/SERUMS & NIGHT CARE/i)).toBeInTheDocument();
+    expect(screen.getByText(/TONE CLARITY/i)).toBeInTheDocument();
+    expect(screen.getByText(/FULL INCI/i)).toBeInTheDocument();
   });
 
   it('renders the editorial ritual card and bottom indicator', () => {
     render(<HeroSection />);
     expect(screen.getByText('01 — THE EVERYDAY RITUAL')).toBeInTheDocument();
-    expect(screen.getByText('A little more balance.')).toBeInTheDocument();
+    expect(screen.getByText('Five purposeful formulas.')).toBeInTheDocument();
     expect(screen.getByText('A THOUGHTFUL APPROACH TO SKINCARE')).toBeInTheDocument();
   });
 });

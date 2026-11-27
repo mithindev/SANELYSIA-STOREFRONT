@@ -27,8 +27,8 @@ export function IngredientsView() {
 
           <div className="inset-frame aspect-[4/3] w-full rounded-sm overflow-hidden bg-[#FAF7F2] border border-[#E7DDD2] relative shadow-md">
             <Image
-              src="/images/hero/hero-product-clean.jpg"
-              alt="Golden botanical oils and active ingredients on a stone counter"
+              src="/images/products/ritual-collection.jpg"
+              alt="SAN ELYSIA targeted serums and night cream arranged on warm travertine stone"
               fill
               sizes="(max-width: 1024px) 100vw, 550px"
               className="object-cover"
@@ -66,7 +66,9 @@ export function IngredientsView() {
                 href={`/ingredients/${ing.slug}`}
                 className="group grid gap-4 py-8 sm:grid-cols-[.1fr_.8fr_1fr_.1fr] sm:items-center hover:bg-[#F3ECE2]/30 px-3 transition-colors rounded-xs"
               >
-                <span className="font-mono text-xs text-[#8E7B6F]">0{index + 1}</span>
+                <span className="font-mono text-xs text-[#8E7B6F]">
+                  {String(index + 1).padStart(2, '0')}
+                </span>
                 <div>
                   <h3 className="font-serif text-2xl text-[#3D271D] group-hover:text-[#5A3825] group-hover:italic transition-colors">
                     {ing.name}

@@ -28,15 +28,16 @@ export const metadata: Metadata = {
     template: '%s | SAN ELYSIA',
   },
   description:
-    'Science-informed skincare formulated for balance and clarity. Discover our signature Niacinamide 12% Balancing Serum and targeted everyday rituals.',
+    'Science-informed skincare formulated for tone clarity and balance. Discover our Balancing Serum, Sepiwhite Serum, Clear Tone, LumiVitaC, and Intensive Brightening Night Cream.',
   metadataBase: new URL('https://sanelysia.com'),
   keywords: [
     'skincare',
-    'serum',
     'balancing serum',
-    'niacinamide',
-    'thoughtful skincare',
-    'clean beauty',
+    'niacinamide 12%',
+    'sepiwhite serum',
+    'kojic acid serum',
+    'vitamin c serum',
+    'night cream',
     'san elysia',
   ],
   authors: [{ name: 'SAN ELYSIA Skincare Labs' }],
@@ -48,21 +49,21 @@ export const metadata: Metadata = {
     siteName: 'SAN ELYSIA',
     title: 'SAN ELYSIA — Thoughtful Skincare for Everyday Glow',
     description:
-      'Science-informed skincare. Feel balanced. Glow naturally. Premium formulations for comfortable, healthy-looking skin.',
+      'Targeted serums and overnight brightening care. Feel balanced. Glow naturally.',
     images: [
       {
-        url: '/images/products/san-elysia-serum.jpg',
-        width: 1024,
-        height: 576,
-        alt: 'SAN ELYSIA Niacinamide 12% Balancing Serum',
+        url: '/images/products/ritual-collection.jpg',
+        width: 1200,
+        height: 900,
+        alt: 'SAN ELYSIA Brightening & Balancing Skincare Collection',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'SAN ELYSIA — Thoughtful Skincare',
-    description: 'Feel balanced. Glow naturally. Premium science-informed formulations.',
-    images: ['/images/products/san-elysia-serum.jpg'],
+    description: 'Feel balanced. Glow naturally. Targeted serums & overnight renewal care.',
+    images: ['/images/products/ritual-collection.jpg'],
   },
 };
 

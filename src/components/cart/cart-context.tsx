@@ -66,6 +66,11 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   const addItem = React.useCallback(
     (product: ProductItem, variantTitle = 'Default', quantity = 1) => {
+      const matchedVariant = product.variants.find((v) => v.title === variantTitle);
+      const pricePaise = matchedVariant ? matchedVariant.pricePaise : product.pricePaise;
+      const formattedPrice = matchedVariant
+        ? matchedVariant.formattedPrice
+        : product.formattedPrice;
       const lineId = `${product.id}_${variantTitle}`;
       setItems((current) => {
         const existing = current.find((item) => item.id === lineId);
@@ -84,8 +89,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
             slug: product.slug,
             title: product.title,
             variantTitle,
-            pricePaise: product.pricePaise,
-            formattedPrice: product.formattedPrice,
+            pricePaise,
+            formattedPrice,
             image: product.image,
             quantity,
           },

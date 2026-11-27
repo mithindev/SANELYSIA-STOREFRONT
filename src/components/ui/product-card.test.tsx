@@ -7,7 +7,7 @@ import { catalogProducts } from '@/data/catalog';
 describe('ProductCard component', () => {
   const sampleProduct = catalogProducts[0];
 
-  it('renders product title, subtitle, and formatted price', () => {
+  it('renders product title, subtitle, color theme, and formatted price', () => {
     render(
       <CartProvider>
         <ProductCard product={sampleProduct} index={0} />
@@ -16,6 +16,7 @@ describe('ProductCard component', () => {
 
     expect(screen.getByText(sampleProduct.title)).toBeInTheDocument();
     expect(screen.getByText(sampleProduct.subtitle)).toBeInTheDocument();
+    expect(screen.getByText(sampleProduct.colorTheme.name)).toBeInTheDocument();
     expect(screen.getAllByText(sampleProduct.formattedPrice).length).toBeGreaterThanOrEqual(1);
   });
 

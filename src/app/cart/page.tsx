@@ -3,7 +3,7 @@
 import * as React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowRight, Minus, Plus, Trash2, ShoppingBag, ShieldCheck, Sparkles, Tag } from 'lucide-react';
+import { ArrowRight, Minus, Plus, Trash2, ShoppingBag, ShieldCheck, Tag } from 'lucide-react';
 import { useCart } from '@/components/cart/cart-context';
 import { Button } from '@/components/ui/button';
 import { formatPaise } from '@/lib/utils/cn';
@@ -187,7 +187,6 @@ export default function CartPage() {
 
             {/* Free shipping status */}
             <div className="p-3 bg-[#FAF7F2] border border-[#E7DDD2] rounded-xs text-xs flex items-center gap-2 text-[#3D271D]">
-              <Sparkles size={16} className="text-[#C3A27B] shrink-0" />
               <span>
                 {freeShipping
                   ? 'Complimentary insured shipping included!'

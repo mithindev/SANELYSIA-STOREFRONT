@@ -15,32 +15,57 @@ export function SkinQuizView() {
   const isDone = step === quizQuestions.length;
   const currentQuestion = quizQuestions[step];
 
-  // Algorithmic Recommendation
+  // Algorithmic Recommendation grounded in the 5 PDF formulations
   const recommendedRoutine = React.useMemo(() => {
     if (!isDone) return [];
-    const midday = answers[0];
-    const goal = answers[1];
-    const sensitive = answers[2] === 'yes' || answers[2] === 'sometimes';
+    const concern = answers[0];
+    const skinType = answers[1];
+    const sensitivity = answers[2];
     const cadence = answers[3];
 
+    const bySlug = (slug: string) => catalogProducts.find((p) => p.slug === slug);
     const results: ProductItem[] = [];
+    const addUnique = (item?: ProductItem) => {
+      if (item && !results.some((r) => r.slug === item.slug)) {
+        results.push(item);
+      }
+    };
 
-    // Core Cleanser
-    const cleanser = catalogProducts.find((p) => p.slug === 'soft-start-cream-cleanser');
-    if (cleanser) results.push(cleanser);
+    // Determine primary targeted serum
+    if (concern === 'oil-pores' || (skinType === 'oily' && concern !== 'pigmentation')) {
+      addUnique(bySlug('balancing-serum'));
+    } else if (concern === 'pigmentation') {
+      if (sensitivity === 'sensitive' || skinType === 'dry') {
+        addUnique(bySlug('sepiwhite-serum'));
+      } else if (skinType === 'oily' || skinType === 'combination') {
+        addUnique(bySlug('clear-tone-serum'));
+      } else {
+        addUnique(bySlug('sepiwhite-serum'));
+      }
+    } else if (concern === 'dullness') {
+      addUnique(bySlug('lumivitac-serum'));
+    } else {
+      // Overnight renewal focus
+      addUnique(
+        sensitivity === 'sensitive' ? bySlug('sepiwhite-serum') : bySlug('lumivitac-serum')
+      );
+      addUnique(bySlug('night-cream'));
+    }
 
-    // Serum
-    const serum = catalogProducts.find((p) => p.slug === 'dew-drops-balancing-serum');
-    if (serum) results.push(serum);
-
-    // Cream
-    const cream = catalogProducts.find((p) => p.slug === 'cloud-nine-daily-moisturizer');
-    if (cream) results.push(cream);
-
-    // Bath soak if holistic cadence
-    if (cadence === 'slow' || goal === 'wellness') {
-      const soak = catalogProducts.find((p) => p.slug === 'quiet-moments-bath-soak');
-      if (soak) results.push(soak);
+    // Cadence additions
+    if (cadence === 'duo') {
+      addUnique(bySlug('night-cream'));
+    } else if (cadence === 'complete') {
+      if (concern === 'oil-pores' || skinType === 'oily') {
+        addUnique(bySlug('balancing-serum'));
+        addUnique(bySlug('clear-tone-serum'));
+      } else {
+        addUnique(bySlug('lumivitac-serum'));
+        addUnique(
+          sensitivity === 'sensitive' ? bySlug('sepiwhite-serum') : bySlug('clear-tone-serum')
+        );
+      }
+      addUnique(bySlug('night-cream'));
     }
 
     return results;
@@ -48,13 +73,58 @@ export function SkinQuizView() {
 
   const routineTitle = React.useMemo(() => {
     if (!isDone) return '';
-    const sensitive = answers[2] === 'yes' || answers[2] === 'sometimes';
+    const concern = answers[0];
     const cadence = answers[3];
-    if (sensitive) return 'The Gentle Equilibrium Ritual';
-    if (cadence === 'slow') return 'The Restorative Evening Glow Ritual';
-    if (cadence === 'minimal') return 'The Two-Step Essential Ritual';
-    return 'The Targeted Everyday Balancing Ritual';
+    if (concern === 'oil-pores') return 'The Clear Balance & Pore Care Ritual';
+    if (concern === 'pigmentation') return 'The Targeted Pigmentation Correcting Ritual';
+    if (concern === 'dullness') return 'The Vitamin C & Antioxidant Radiance Ritual';
+    if (cadence === 'complete') return 'The Complete AM/PM Brightening Ritual';
+    return 'The Overnight Brightening & Renewal Ritual';
   }, [isDone, answers]);
+
+  const applicationSteps = React.useMemo(() => {
+    if (!isDone) return [];
+    const slugs = new Set(recommendedRoutine.map((p) => p.slug));
+    const steps: Array<{ label: string; detail: string }> = [];
+
+    if (slugs.has('balancing-serum')) {
+      steps.push({
+        label: 'Morning / Clarify (Balancing Serum)',
+        detail:
+          'Apply 2–3 drops to clean, dry skin across face and neck. Start once daily and increase to twice daily as tolerated, followed by moisturizer and daytime sunscreen.',
+      });
+    }
+    if (slugs.has('lumivitac-serum')) {
+      steps.push({
+        label: 'Morning Radiance (LumiVitaC)',
+        detail:
+          'Apply 2–3 drops of Vitamin C 10% + Glutathione Serum to clean, dry skin before moisturizer and broad-spectrum sunscreen.',
+      });
+    }
+    if (slugs.has('sepiwhite-serum')) {
+      steps.push({
+        label: 'Evening Spot Care (Sepiwhite Serum)',
+        detail:
+          'Apply a few drops to clean, dry face and neck and allow to absorb before moisturizer. Use sunscreen during the daytime.',
+      });
+    }
+    if (slugs.has('clear-tone-serum')) {
+      steps.push({
+        label: 'Evening Tone Clarity (Clear Tone)',
+        detail:
+          'Apply 2–3 drops of Kojic Acid 2% + Azelaic Acid Serum to clean, dry skin and gently massage until absorbed. Follow with moisturizer and use daytime sunscreen.',
+      });
+    }
+    if (slugs.has('night-cream')) {
+      steps.push({
+        label: 'Overnight Renewal (Night Cream)',
+        detail:
+          'Apply an appropriate amount to clean, dry face and neck every night and massage gently until absorbed, avoiding direct contact with eyes.',
+      });
+    }
+
+    return steps;
+  }, [isDone, recommendedRoutine]);
 
   return (
     <div className="mx-auto w-full max-w-[1320px] px-6 md:px-10 lg:px-16 py-14 lg:py-20 min-h-[70vh]">
@@ -65,10 +135,11 @@ export function SkinQuizView() {
             THE SAN ELYSIA SKIN DIAGNOSTIC
           </p>
           <h1 className="mt-3 font-serif text-4xl sm:text-5xl font-medium text-[#3D271D]">
-            Let’s find <span className="marker italic font-normal text-[#3D271D]">your glow.</span>
+            Let’s find <span className="marker italic font-normal text-[#3D271D]">your ritual.</span>
           </h1>
           <p className="mt-4 text-sm leading-relaxed text-[#685346]">
-            No complicated questionnaires. Just 4 science-informed steps to understand your skin barrier rhythm.
+            Answer 4 quick questions to match your skin concern and tolerance with our targeted
+            serums and overnight brightening care.
           </p>
 
           {/* Progress bar */}
@@ -160,8 +231,8 @@ export function SkinQuizView() {
           </div>
 
           <p className="mt-8 text-[10px] leading-relaxed text-[#8E7B6F]">
-            Your preferences stay private in this session and are never sold. This is an educational
-            routine guide, not a medical diagnosis.
+            Your preferences stay private in this session. Always patch test new formulations before
+            use and wear sunscreen during the day.
           </p>
         </div>
       ) : (
@@ -170,19 +241,27 @@ export function SkinQuizView() {
           <div className="mx-auto max-w-2xl text-center">
             <Leaf size={32} strokeWidth={1.2} className="mx-auto text-[#C3A27B]" />
             <p className="mt-5 text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.24em] text-[#685346]">
-              A LITTLE CARE, CHOSEN FOR YOU
+              TAILORED FOR YOUR SKIN GOALS
             </p>
             <h1 className="mt-3 font-serif text-4xl sm:text-5xl font-medium text-[#3D271D]">
               {routineTitle}
             </h1>
             <p className="mt-4 text-sm leading-relaxed text-[#685346] max-w-xl mx-auto">
-              Based on your answers, here is your customized daily equilibrium prescription.
-              Formulated to soothe, clarify, and strengthen your skin barrier.
+              Based on your responses, here is your recommended SAN ELYSIA combination to help
+              improve the appearance of uneven tone, clarity, and overnight hydration.
             </p>
           </div>
 
           {/* Recommended Product Cards */}
-          <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div
+            className={`mt-12 grid grid-cols-1 gap-6 ${
+              recommendedRoutine.length === 1
+                ? 'max-w-sm mx-auto'
+                : recommendedRoutine.length === 2
+                  ? 'sm:grid-cols-2 max-w-2xl mx-auto'
+                  : 'sm:grid-cols-2 lg:grid-cols-3'
+            }`}
+          >
             {recommendedRoutine.map((product, index) => (
               <ProductCard key={product.id} product={product} index={index} />
             ))}
@@ -192,34 +271,27 @@ export function SkinQuizView() {
           <div className="mx-auto mt-12 max-w-2xl border border-[#3D271D]/20 bg-[#F3ECE2]/80 p-8 rounded-xs shadow-xs">
             <h2 className="font-serif text-2xl text-[#3D271D]">Your Daily Application Order</h2>
             <ol className="mt-5 space-y-3.5 text-sm text-[#3D271D] leading-relaxed">
-              <li className="flex items-start gap-3">
-                <span className="font-mono text-xs font-semibold text-[#5A3825] pt-0.5">01.</span>
-                <span>
-                  <strong>Cleanse:</strong> Massage 1–2 pumps of Soft Start Cleanser onto dry face. Rinse gently with lukewarm water.
-                </span>
-              </li>
-              <li className="flex items-start gap-3">
-                <span className="font-mono text-xs font-semibold text-[#5A3825] pt-0.5">02.</span>
-                <span>
-                  <strong>Balance:</strong> Press 3–4 drops of Dew Drops 12% Niacinamide Serum into damp skin to regulate pores and sebum.
-                </span>
-              </li>
-              <li className="flex items-start gap-3">
-                <span className="font-mono text-xs font-semibold text-[#5A3825] pt-0.5">03.</span>
-                <span>
-                  <strong>Protect:</strong> Warm Cloud Nine Ceramide Cream between palms and smooth evenly to seal in barrier lipids.
-                </span>
-              </li>
+              {applicationSteps.map((s, idx) => (
+                <li key={idx} className="flex items-start gap-3">
+                  <span className="font-mono text-xs font-semibold text-[#5A3825] pt-0.5">
+                    0{idx + 1}.
+                  </span>
+                  <span>
+                    <strong>{s.label}:</strong> {s.detail}
+                  </span>
+                </li>
+              ))}
             </ol>
             <p className="mt-6 border-t border-[#3D271D]/15 pt-4 text-[10px] text-[#8E7B6F] leading-relaxed">
-              Always finish your morning ritual with daily broad-spectrum SPF 30+.
+              For external use only. Patch test before use, avoid direct contact with eyes, and
+              always use sunscreen during the day.
             </p>
           </div>
 
           <div className="mt-10 flex flex-wrap justify-center gap-4">
             <Link href="/shop">
               <Button variant="primary" size="md">
-                EXPLORE ALL PRODUCTS
+                EXPLORE ALL FORMULATIONS
               </Button>
             </Link>
             <button

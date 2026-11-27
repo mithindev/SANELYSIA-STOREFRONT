@@ -1,7 +1,7 @@
 import * as React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowRight, ArrowDown, Droplet, Heart, Sparkles } from 'lucide-react';
+import { ArrowRight, ArrowDown, Droplet, ShieldCheck, Sun } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 export function HeroSection() {
@@ -26,7 +26,7 @@ export function HeroSection() {
         </span>
       </div>
 
-      <div className="mx-auto w-full max-w-[1320px] px-6 md:px-10 lg:px-16 grid min-h-[calc(100dvh-118px)] items-center gap-12 py-16 lg:min-h-[690px] lg:grid-cols-2 lg:gap-10 lg:py-20">
+      <div className="mx-auto w-full max-w-[1320px] px-6 md:px-10 lg:px-16 grid items-center gap-12 pt-8 pb-14 lg:grid-cols-2 lg:gap-10 lg:pt-10 lg:pb-16">
         {/* ========================================================= */}
         {/* LEFT COLUMN: Editorial Typography, Copy, CTAs, Benefits   */}
         {/* ========================================================= */}
@@ -48,25 +48,26 @@ export function HeroSection() {
           </h1>
 
           {/* Supporting Description */}
-          <p className="mt-6 max-w-[410px] text-[14px] leading-[1.9] text-[#685346]">
-            A thoughtful serum and targeted skincare essentials to help keep your skin clear,
-            comfortable and healthy-looking. Because your glow begins with balance.
+          <p className="mt-6 max-w-[430px] text-[14px] leading-[1.9] text-[#685346]">
+            Targeted brightening serums, oil-balancing care, and intensive overnight renewal—formulated
+            with Niacinamide, Vitamin C, Kojic Acid, Sepiwhite™, and soothing botanicals for a
+            clearer, more radiant-looking complexion.
           </p>
 
           {/* Call to Actions */}
           <div className="mt-8 flex flex-wrap gap-3">
-            <Link href="#shop">
+            <Link href="#daily-favorites">
               <Button
                 variant="primary"
                 size="md"
                 className="inline-flex items-center justify-center gap-3"
               >
-                <span>SHOP THE BALANCING SERUM</span>
+                <span>EXPLORE THE COLLECTION</span>
                 <ArrowRight className="w-4 h-4 stroke-[1.5]" />
               </Button>
             </Link>
 
-            <Link href="#ritual">
+            <Link href="/quiz">
               <Button
                 variant="secondary"
                 size="md"
@@ -86,27 +87,27 @@ export function HeroSection() {
               <p className="mt-2.5 text-[9px] font-medium uppercase tracking-[0.14em] text-[#3D271D] leading-normal">
                 TARGETED
                 <br />
-                FORMULATIONS
+                SERUMS & NIGHT CARE
               </p>
             </div>
 
             {/* Benefit 2 */}
             <div>
-              <Heart size={20} strokeWidth={1.25} className="text-[#3D271D]" />
+              <Sun size={20} strokeWidth={1.25} className="text-[#3D271D]" />
               <p className="mt-2.5 text-[9px] font-medium uppercase tracking-[0.14em] text-[#3D271D] leading-normal">
-                GENTLE, EVERYDAY
+                BRIGHTENING &
                 <br />
-                CARE
+                TONE CLARITY
               </p>
             </div>
 
             {/* Benefit 3 */}
             <div>
-              <Sparkles size={20} strokeWidth={1.25} className="text-[#3D271D]" />
+              <ShieldCheck size={20} strokeWidth={1.25} className="text-[#3D271D]" />
               <p className="mt-2.5 text-[9px] font-medium uppercase tracking-[0.14em] text-[#3D271D] leading-normal">
-                CLEARER, MORE
+                FULL INCI
                 <br />
-                BALANCED SKIN
+                TRANSPARENCY
               </p>
             </div>
           </div>
@@ -119,15 +120,15 @@ export function HeroSection() {
           {/* Layer 1: Backdrop Accent */}
           <div className="hero-backdrop" aria-hidden="true" />
 
-          {/* Layer 2: Main Still Product Image with Inset Frame */}
+          {/* Layer 2: Main Still Collection Image with Inset Frame */}
           <div className="hero-still inset-frame overflow-hidden bg-[#FAF7F2]">
             <Image
-              src="/images/hero/san-elysia-serum-cutout.webp"
-              alt="SAN ELYSIA Niacinamide 12% Balancing Serum on natural stone pedestal with fresh botanicals and jasmine blossoms"
+              src="/images/products/ritual-collection.jpg"
+              alt="SAN ELYSIA five-product brightening and balancing skincare collection on travertine stone"
               fill
               priority
               sizes="(max-width: 768px) 83vw, (max-width: 1200px) 45vw, 550px"
-              className="object-cover object-bottom"
+              className="object-cover object-center"
             />
           </div>
 
@@ -142,7 +143,7 @@ export function HeroSection() {
             />
           </div>
 
-          {/* Layer 4: Editorial Information Card (Directly beneath the product pedestal) */}
+          {/* Layer 4: Editorial Information Card */}
           <Link
             href="#ritual"
             className="hero-note group transition-colors hover:bg-[#F3ECE2]/90 block"
@@ -151,7 +152,7 @@ export function HeroSection() {
               01 — THE EVERYDAY RITUAL
             </p>
             <p className="mt-2 flex items-center justify-between font-serif text-lg text-[#3D271D]">
-              <span>A little more balance.</span>
+              <span>Five purposeful formulas.</span>
               <ArrowRight size={17} strokeWidth={1.5} className="transition-transform group-hover:translate-x-1" />
             </p>
           </Link>
@@ -160,7 +161,7 @@ export function HeroSection() {
 
       {/* Bottom Transition Indicator */}
       <a
-        href="#formula"
+        href="#daily-favorites"
         className="absolute bottom-4 left-1/2 hidden -translate-x-1/2 items-center gap-2 text-[8px] uppercase tracking-[0.2em] text-[#685346] hover:text-[#3D271D] transition-colors lg:flex"
       >
         <span>A THOUGHTFUL APPROACH TO SKINCARE</span>

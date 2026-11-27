@@ -6,7 +6,13 @@ import Link from 'next/link';
 import { ArrowUpRight } from 'lucide-react';
 import { journalPosts, JournalPost } from '@/data/journal';
 
-const categories = ['All Articles', 'Skincare Philosophy', 'Everyday Rituals', 'Ingredients', 'Wellness'];
+const categories = [
+  'All Articles',
+  'Ingredients',
+  'Brightening Science',
+  'Everyday Rituals',
+  'Skincare Philosophy',
+];
 
 export function JournalIndexView() {
   const [selectedCategory, setSelectedCategory] = React.useState('All Articles');

@@ -25,7 +25,7 @@ export default async function IngredientDetailPage({ params }: IngredientDetailP
 
   // Find products that contain this ingredient
   const relatedProducts = catalogProducts.filter((p) =>
-    ingredient.foundIn.some((title) => p.title.toLowerCase().includes(title.toLowerCase().slice(0, 15)))
+    ingredient.foundInSlugs.includes(p.slug)
   );
 
   return (

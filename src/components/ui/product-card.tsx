@@ -49,6 +49,23 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
           {badgeText}
         </span>
 
+        {/* Top-Right Packaging Color Theme Swatch */}
+        <span
+          className="absolute right-3 top-3 inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[8px] font-sans font-semibold uppercase tracking-[0.12em] backdrop-blur-xs select-none"
+          style={{
+            backgroundColor: `${product.colorTheme.surfaceHex}E6`,
+            borderColor: product.colorTheme.borderHex,
+            color: product.colorTheme.textHex,
+          }}
+        >
+          <span
+            aria-hidden="true"
+            className="h-2 w-2 rounded-full shrink-0"
+            style={{ backgroundColor: product.colorTheme.primaryHex }}
+          />
+          <span>{product.colorTheme.name}</span>
+        </span>
+
         {/* Quick Add Slide-up Action on Hover / Focus */}
         <div className="product-quick absolute inset-x-0 bottom-0 z-10 transition-transform duration-220 ease-out">
           {product.inStock ? (

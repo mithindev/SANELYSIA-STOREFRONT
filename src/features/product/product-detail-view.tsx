@@ -3,8 +3,9 @@
 import * as React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Minus, Plus, ArrowRight, Leaf, Package, Star, ArrowUpRight, Check } from 'lucide-react';
+import { Minus, Plus, Leaf, Package, Star, ArrowUpRight, Check, ShieldAlert } from 'lucide-react';
 import { ProductItem, catalogProducts } from '@/data/catalog';
+import { reviews } from '@/data/reviews';
 import { useCart } from '@/components/cart/cart-context';
 import { Button } from '@/components/ui/button';
 import { ProductCard } from '@/components/ui/product-card';
@@ -17,10 +18,27 @@ export function ProductDetailView({ product }: { product: ProductItem }) {
   const [quantity, setQuantity] = React.useState(1);
   const [addedSuccess, setAddedSuccess] = React.useState(false);
 
+  React.useEffect(() => {
+    setSelectedImage(product.image);
+    setSelectedVariantId(product.variants[0]?.id || '');
+    setQuantity(1);
+  }, [product]);
+
   const { addItem } = useCart();
 
   const selectedVariant =
     product.variants.find((v) => v.id === selectedVariantId) || product.variants[0];
+
+  const productReviews = React.useMemo(
+    () => reviews.filter((r) => r.productSlug === product.slug),
+    [product.slug]
+  );
+
+  const avgRating = React.useMemo(() => {
+    if (!productReviews.length) return '5.0';
+    const sum = productReviews.reduce((acc, r) => acc + r.rating, 0);
+    return (sum / productReviews.length).toFixed(1);
+  }, [productReviews]);
 
   const handleAddToCart = () => {
     addItem(product, selectedVariant?.title || 'Default', quantity);
@@ -48,9 +66,9 @@ export function ProductDetailView({ product }: { product: ProductItem }) {
       </nav>
 
       {/* 2-Column Main PDP Grid */}
-      <div className="grid gap-10 lg:grid-cols-2 lg:gap-16">
+      <div className="grid gap-10 lg:grid-cols-2 lg:gap-16 items-start">
         {/* Left: Gallery */}
-        <div>
+        <div className="lg:sticky lg:top-28">
           <div className="inset-frame overflow-hidden rounded-sm bg-[#F3ECE2] border border-[#E7DDD2] aspect-[4/5] relative w-full shadow-md">
             <Image
               src={selectedImage}
@@ -80,20 +98,45 @@ export function ProductDetailView({ product }: { product: ProductItem }) {
               ))}
             </div>
           )}
+
+          {/* Packaging Color Theme Note */}
+          <div
+            className="mt-5 flex items-center gap-3 rounded-xs border px-4 py-3 text-xs"
+            style={{
+              backgroundColor: product.colorTheme.surfaceHex,
+              borderColor: product.colorTheme.borderHex,
+              color: product.colorTheme.textHex,
+            }}
+          >
+            <span
+              aria-hidden="true"
+              className="h-3.5 w-3.5 rounded-full shrink-0 border border-black/10"
+              style={{ backgroundColor: product.colorTheme.primaryHex }}
+            />
+            <div>
+              <span className="font-semibold uppercase tracking-[0.12em] text-[10px]">
+                Signature Palette: {product.colorTheme.name}
+              </span>
+              <p className="text-[11px] opacity-85 mt-0.5">{product.colorTheme.moodNote}</p>
+            </div>
+          </div>
         </div>
 
         {/* Right: Product Narrative & Actions */}
-        <div className="lg:py-2 flex flex-col justify-between">
+        <div className="lg:py-1 flex flex-col justify-between">
           <div>
-            {/* Category / Subtitle Eyebrow */}
-            <p className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.24em] text-[#685346]">
-              {product.subtitle}
+            {/* Front Label / Eyebrow */}
+            <p className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.22em] text-[#685346]">
+              {product.frontLabel || product.subtitle}
             </p>
 
             {/* H1 Title */}
-            <h1 className="mt-3 font-serif text-3xl sm:text-4xl lg:text-[42px] font-medium leading-tight text-[#3D271D]">
+            <h1 className="mt-2.5 font-serif text-3xl sm:text-4xl lg:text-[42px] font-medium leading-tight text-[#3D271D]">
               {product.title}
             </h1>
+            <p className="mt-1.5 text-xs uppercase tracking-[0.16em] text-[#8E7B6F]">
+              {product.subtitle}
+            </p>
 
             {/* Rating link */}
             <Link
@@ -105,8 +148,12 @@ export function ProductDetailView({ product }: { product: ProductItem }) {
                   <Star key={i} size={13} className="fill-[#C3A27B]" />
                 ))}
               </div>
-              <span className="font-medium text-[#3D271D]">5.0</span>
-              <span className="text-[#8E7B6F]">(18 verified reviews)</span>
+              <span className="font-medium text-[#3D271D]">{avgRating}</span>
+              <span className="text-[#8E7B6F]">
+                {productReviews.length > 0
+                  ? `(${productReviews.length} verified ${productReviews.length === 1 ? 'review' : 'reviews'})`
+                  : '(Community stories)'}
+              </span>
             </Link>
 
             {/* Price display */}
@@ -127,16 +174,40 @@ export function ProductDetailView({ product }: { product: ProductItem }) {
               dangerouslySetInnerHTML={{ __html: product.descriptionHtml }}
             />
 
-            {/* Variant selector */}
-            {product.variants.length > 1 && (
+            {/* Suitable For */}
+            {product.suitableFor && (
+              <p className="mt-4 inline-block rounded-xs border border-[#E7DDD2] bg-[#F3ECE2]/60 px-3 py-1.5 text-[11px] font-medium text-[#3D271D]">
+                {product.suitableFor}
+              </p>
+            )}
+
+            {/* Key Benefits */}
+            <div className="mt-6 border border-[#E7DDD2] bg-[#FFFDF9] p-5 rounded-xs">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[#685346] mb-3">
+                Key Benefits
+              </p>
+              <ul className="space-y-2 text-xs text-[#3D271D]">
+                {product.benefits.map((benefit, i) => (
+                  <li key={i} className="flex items-start gap-2.5 leading-relaxed">
+                    <Check
+                      size={14}
+                      strokeWidth={2}
+                      className="shrink-0 mt-0.5"
+                      style={{ color: product.colorTheme.primaryHex }}
+                    />
+                    <span>{benefit}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Variant / Size selector */}
+            {product.variants.length > 0 && (
               <div className="mt-6">
-                <label
-                  htmlFor="variant-select"
-                  className="mb-2 block text-xs font-sans font-medium uppercase tracking-wider text-[#3D271D]"
-                >
-                  Select Volume
-                </label>
-                <div className="flex gap-2.5">
+                <span className="mb-2 block text-[11px] font-sans font-medium uppercase tracking-wider text-[#3D271D]">
+                  Pack Size
+                </span>
+                <div className="flex flex-wrap gap-2.5">
                   {product.variants.map((v) => (
                     <button
                       key={v.id}
@@ -210,16 +281,35 @@ export function ProductDetailView({ product }: { product: ProductItem }) {
 
           {/* Accordions */}
           <div className="mt-8 border-t border-[#3D271D]/20 divide-y divide-[#3D271D]/20">
-            {/* 1. Ingredients */}
+            {/* 1. Key Actives & Botanicals */}
             <details className="group py-4" open>
               <summary className="flex cursor-pointer items-center justify-between text-sm font-sans font-medium text-[#3D271D] select-none">
-                <span>Key Ingredients & Active Formulation</span>
+                <span>Key Actives & Ingredients</span>
                 <Plus size={15} className="transition-transform group-open:rotate-45" />
               </summary>
-              <div className="pt-3 pb-2 text-xs text-[#685346] leading-relaxed space-y-2">
-                <ul className="list-disc pl-5 space-y-1">
-                  {product.ingredients.map((ing, i) => (
-                    <li key={i}>{ing}</li>
+              <div className="pt-3 pb-2 text-xs text-[#685346] leading-relaxed space-y-3">
+                <ul className="space-y-2.5">
+                  {product.keyActives.map((active, i) => (
+                    <li key={i} className="border-l-2 border-[#E7DDD2] pl-3">
+                      <div className="flex flex-wrap items-center gap-2">
+                        {active.ingredientSlug ? (
+                          <Link
+                            href={`/ingredients/${active.ingredientSlug}`}
+                            className="font-semibold text-[#3D271D] hover:text-[#5A3825] underline underline-offset-2"
+                          >
+                            {active.name}
+                          </Link>
+                        ) : (
+                          <span className="font-semibold text-[#3D271D]">{active.name}</span>
+                        )}
+                        {active.concentration && (
+                          <span className="rounded-xs bg-[#F3ECE2] px-1.5 py-0.5 text-[10px] font-semibold text-[#5A3825]">
+                            {active.concentration}
+                          </span>
+                        )}
+                      </div>
+                      <p className="mt-0.5 text-[#685346]">{active.description}</p>
+                    </li>
                   ))}
                 </ul>
                 <Link
@@ -231,10 +321,21 @@ export function ProductDetailView({ product }: { product: ProductItem }) {
               </div>
             </details>
 
-            {/* 2. How to Use */}
+            {/* 2. Full Ingredients (INCI) */}
             <details className="group py-4">
               <summary className="flex cursor-pointer items-center justify-between text-sm font-sans font-medium text-[#3D271D] select-none">
-                <span>How to Apply / The Ritual</span>
+                <span>Full Ingredients (INCI)</span>
+                <Plus size={15} className="transition-transform group-open:rotate-45" />
+              </summary>
+              <div className="pt-3 pb-2 text-xs text-[#685346] leading-relaxed">
+                <p>{product.inci}</p>
+              </div>
+            </details>
+
+            {/* 3. How to Use */}
+            <details className="group py-4">
+              <summary className="flex cursor-pointer items-center justify-between text-sm font-sans font-medium text-[#3D271D] select-none">
+                <span>Directions for Use</span>
                 <Plus size={15} className="transition-transform group-open:rotate-45" />
               </summary>
               <div className="pt-3 pb-2 text-xs text-[#685346] leading-relaxed">
@@ -246,16 +347,24 @@ export function ProductDetailView({ product }: { product: ProductItem }) {
               </div>
             </details>
 
-            {/* 3. Safety Advice */}
+            {/* 4. Caution & Storage */}
             <details className="group py-4">
               <summary className="flex cursor-pointer items-center justify-between text-sm font-sans font-medium text-[#3D271D] select-none">
-                <span>Safety & Storage Advice</span>
+                <span>Caution & Storage Advice</span>
                 <Plus size={15} className="transition-transform group-open:rotate-45" />
               </summary>
-              <div className="pt-3 pb-2 text-xs text-[#685346] leading-relaxed">
+              <div className="pt-3 pb-2 text-xs text-[#685346] leading-relaxed space-y-2">
+                <p className="flex items-start gap-2">
+                  <ShieldAlert size={14} className="shrink-0 mt-0.5 text-[#5A3825]" />
+                  <span>
+                    <strong>Caution:</strong>{' '}
+                    {product.caution ||
+                      'For external use only. Avoid contact with eyes. Patch test before use. Discontinue use if irritation occurs.'}
+                  </span>
+                </p>
                 <p>
-                  For external use only. Patch test before initial use. Store in a cool, dry place
-                  away from direct sun. Our formulations do not replace daily SPF 30+ sun protection.
+                  <strong>Storage:</strong>{' '}
+                  {product.storage || 'Store in a cool, dry place away from direct sunlight.'}
                 </p>
               </div>
             </details>

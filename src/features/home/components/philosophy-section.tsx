@@ -28,8 +28,8 @@ export function PhilosophySection() {
           />
           <div className="relative aspect-[4/3] w-full rounded-sm overflow-hidden bg-[#FAF7F2] border border-[#E7DDD2] shadow-md">
             <Image
-              src="/images/hero/hero-product-clean.jpg"
-              alt="SAN ELYSIA botanical ingredients being thoughtfully prepared"
+              src="/images/products/night-cream.jpg"
+              alt="SAN ELYSIA Intensive Brightening and Skin Renewal Night Cream on travertine stone"
               fill
               sizes="(max-width: 1024px) 90vw, 500px"
               className="object-cover"

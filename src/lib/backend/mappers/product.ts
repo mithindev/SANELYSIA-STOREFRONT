@@ -52,7 +52,7 @@ export function mapCatalogProductToPresentation(dto: CatalogProductDTO): Product
     inStock: dto.inStock,
     availableStock: dto.availableQuantity,
     heroImage: {
-      url: primaryImg?.url || dto.thumbnailUrl || '/images/products/san-elysia-serum.jpg',
+      url: primaryImg?.url || dto.thumbnailUrl || '/images/products/balancing-serum.jpg',
       alt: primaryImg?.altText || dto.title,
     },
     gallery: (dto.images || []).map((img) => ({

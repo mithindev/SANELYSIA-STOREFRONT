@@ -1,10 +1,12 @@
 'use client';
 
 import * as React from 'react';
-import Link from 'next/link';
-import { Star, MessageCircle, ArrowRight, Check } from 'lucide-react';
-import { reviews, ReviewItem } from '@/data/reviews';
+import { Star, ArrowRight, Check } from 'lucide-react';
+import { reviews } from '@/data/reviews';
+import { catalogProducts } from '@/data/catalog';
 import { Button } from '@/components/ui/button';
+
+const singleProducts = catalogProducts.filter((p) => p.category !== 'bundles');
 
 export default function ReviewsPage() {
   const [filterProduct, setFilterProduct] = React.useState('all');
@@ -12,12 +14,18 @@ export default function ReviewsPage() {
   const [showSubmitModal, setShowSubmitModal] = React.useState(false);
   const [formSubmitted, setFormSubmitted] = React.useState(false);
 
+  const avgRating = React.useMemo(() => {
+    if (!reviews.length) return '5.0';
+    const sum = reviews.reduce((acc, r) => acc + r.rating, 0);
+    return (sum / reviews.length).toFixed(1);
+  }, []);
+
   const filteredReviews = React.useMemo(() => {
     return reviews
-      .filter((r) => filterProduct === 'all' || r.productTitle.includes(filterProduct))
+      .filter((r) => filterProduct === 'all' || r.productSlug === filterProduct)
       .sort((a, b) => {
         if (sortBy === 'highest') return b.rating - a.rating;
-        return 0; // newest
+        return 0;
       });
   }, [filterProduct, sortBy]);
 
@@ -32,7 +40,7 @@ export default function ReviewsPage() {
             Community <span className="marker italic font-normal text-[#3D271D]">stories.</span>
           </h1>
           <p className="mt-3 text-sm text-[#685346] max-w-md leading-relaxed">
-            Honest reflections from everyday people caring for their skin with intention and balance.
+            Honest reflections from everyday routines with our serums and overnight brightening care.
           </p>
         </div>
 
@@ -48,7 +56,7 @@ export default function ReviewsPage() {
       {/* Analytics & Filters Bar */}
       <div className="mt-12 flex flex-wrap items-center justify-between gap-6 border-y border-[#3D271D]/20 py-6">
         <div className="flex items-center gap-4">
-          <span className="font-serif text-4xl text-[#3D271D]">5.0</span>
+          <span className="font-serif text-4xl text-[#3D271D]">{avgRating}</span>
           <div>
             <div className="flex text-[#C3A27B]">
               {[...Array(5)].map((_, i) => (
@@ -63,19 +71,21 @@ export default function ReviewsPage() {
           <select
             value={filterProduct}
             onChange={(e) => setFilterProduct(e.target.value)}
+            aria-label="Filter reviews by product"
             className="h-11 border border-[#3D271D]/20 bg-[#FFFDF9] px-3 text-xs text-[#3D271D] rounded-xs outline-none cursor-pointer"
           >
-            <option value="all">All products</option>
-            <option value="Balancing Serum">Dew Drops Balancing Serum</option>
-            <option value="Cleanser">Soft Start Cleanser</option>
-            <option value="Moisturizer">Cloud Nine Moisturizer</option>
-            <option value="Magnesium">Daily Balance Magnesium</option>
-            <option value="Ritual">Everyday Ritual Bundle</option>
+            <option value="all">All formulations</option>
+            {singleProducts.map((p) => (
+              <option key={p.id} value={p.slug}>
+                {p.title}
+              </option>
+            ))}
           </select>
 
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value)}
+            aria-label="Sort reviews"
             className="h-11 border border-[#3D271D]/20 bg-[#FFFDF9] px-3 text-xs text-[#3D271D] rounded-xs outline-none cursor-pointer"
           >
             <option value="newest">Newest first</option>
@@ -163,10 +173,11 @@ export default function ReviewsPage() {
                     Product Used
                   </label>
                   <select className="w-full border border-[#3D271D]/20 bg-[#FFFDF9] p-3 text-xs outline-none">
-                    <option>Dew Drops Botanical Balancing Serum</option>
-                    <option>Soft Start Nourishing Cream Cleanser</option>
-                    <option>Cloud Nine Ceramide Barrier Cream</option>
-                    <option>The Complete Everyday Glow Ritual</option>
+                    {catalogProducts.map((p) => (
+                      <option key={p.id} value={p.slug}>
+                        {p.title}
+                      </option>
+                    ))}
                   </select>
                 </div>
                 <div>

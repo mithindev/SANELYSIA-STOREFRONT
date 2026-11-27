@@ -1,14 +1,13 @@
 import * as React from 'react';
 import Link from 'next/link';
-import { ArrowRight, Sparkles } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 export function QuizCalloutSection() {
   return (
     <section className="relative overflow-hidden border-b border-[#3D271D]/15 py-20 lg:py-24 bg-[#FAF7F2]">
       <div className="mx-auto w-full max-w-[1320px] px-6 md:px-10 lg:px-16 text-center">
-        <Sparkles className="mx-auto text-[#C3A27B]" size={28} strokeWidth={1.2} />
-        <p className="mt-5 text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.24em] text-[#685346]">
+        <p className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.24em] text-[#685346]">
           Not sure where to begin?
         </p>
         <h2 className="mx-auto mt-4 max-w-[650px] font-serif text-4xl sm:text-5xl font-medium tracking-tight text-[#3D271D]">
