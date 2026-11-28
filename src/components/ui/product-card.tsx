@@ -4,6 +4,7 @@ import * as React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Plus, ArrowUpRight, Check } from 'lucide-react';
+import { AnimatePresence, motion } from 'motion/react';
 import { ProductItem } from '@/data/catalog';
 import { useCart } from '@/components/cart/cart-context';
 
@@ -25,6 +26,7 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
   };
 
   const badgeText = product.badge || (index === 0 ? 'SIGNATURE RITUAL' : `0${index + 1} — DAILY CARE`);
+  const secondaryImage = product.gallery.find((img) => img && img !== product.image);
 
   return (
     <article className="product-card group flex flex-col justify-between">
@@ -32,7 +34,7 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
       <div className="relative overflow-hidden rounded-sm bg-[#F3ECE2] border border-[#E7DDD2] aspect-[4/5] w-full">
         <Link
           href={`/product/${product.slug}`}
-          className="block w-full h-full"
+          className="block w-full h-full relative"
           aria-label={`View ${product.title}`}
         >
           <Image
@@ -40,8 +42,19 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
             alt={product.title}
             fill
             sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-            className="object-cover object-center transition-transform duration-300 group-hover:scale-[1.035]"
+            className={`object-cover object-center transition-all duration-500 ease-out group-hover:scale-[1.035] ${
+              secondaryImage ? 'group-hover:opacity-0' : ''
+            }`}
           />
+          {secondaryImage && (
+            <Image
+              src={secondaryImage}
+              alt={`${product.title} — collection texture`}
+              fill
+              sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+              className="object-cover object-center opacity-0 transition-all duration-500 ease-out group-hover:opacity-100 group-hover:scale-[1.035]"
+            />
+          )}
         </Link>
 
         {/* Top-Left Editorial Badge */}
@@ -69,18 +82,28 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
         {/* Quick Add Slide-up Action on Hover / Focus */}
         <div className="product-quick absolute inset-x-0 bottom-0 z-10 transition-transform duration-220 ease-out">
           {product.inStock ? (
-            <button
+            <motion.button
               type="button"
               onClick={handleQuickAdd}
+              whileTap={{ scale: 0.985 }}
               aria-label={`Quick add ${product.title} to bag`}
               className="flex min-h-11 w-full items-center justify-between bg-[#3D271D] px-4 py-3 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#FAF7F2] transition-colors hover:bg-[#5A3825] cursor-pointer"
             >
-              <span className="flex items-center gap-2">
-                {justAdded ? <Check size={14} className="text-[#C3A27B]" /> : <Plus size={14} />}
-                <span>{justAdded ? 'Added to bag' : 'Add to bag'}</span>
-              </span>
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.span
+                  key={justAdded ? 'added' : 'add'}
+                  initial={{ opacity: 0, y: 4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -4 }}
+                  transition={{ duration: 0.16 }}
+                  className="flex items-center gap-2"
+                >
+                  {justAdded ? <Check size={14} className="text-[#C3A27B]" /> : <Plus size={14} />}
+                  <span>{justAdded ? 'Added to bag' : 'Add to bag'}</span>
+                </motion.span>
+              </AnimatePresence>
               <span>{product.formattedPrice}</span>
-            </button>
+            </motion.button>
           ) : (
             <Link
               href={`/product/${product.slug}`}

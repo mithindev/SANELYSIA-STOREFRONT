@@ -4,11 +4,13 @@ import * as React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Minus, Plus, Leaf, Package, Star, ArrowUpRight, Check, ShieldAlert } from 'lucide-react';
+import { AnimatePresence, motion } from 'motion/react';
 import { ProductItem, catalogProducts } from '@/data/catalog';
 import { reviews } from '@/data/reviews';
 import { useCart } from '@/components/cart/cart-context';
 import { Button } from '@/components/ui/button';
 import { ProductCard } from '@/components/ui/product-card';
+import { LUXURY_EASE, AnimatedAccordion, StaggerGroup, StaggerItem, Reveal } from '@/components/motion';
 
 export function ProductDetailView({ product }: { product: ProductItem }) {
   const [selectedImage, setSelectedImage] = React.useState(product.image);
@@ -70,14 +72,25 @@ export function ProductDetailView({ product }: { product: ProductItem }) {
         {/* Left: Gallery */}
         <div className="lg:sticky lg:top-28">
           <div className="inset-frame overflow-hidden rounded-sm bg-[#F3ECE2] border border-[#E7DDD2] aspect-[4/5] relative w-full shadow-md">
-            <Image
-              src={selectedImage}
-              alt={product.title}
-              fill
-              priority
-              sizes="(max-width: 1024px) 100vw, 550px"
-              className="object-cover object-center"
-            />
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={selectedImage}
+                initial={{ opacity: 0, scale: 1.02 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.28, ease: LUXURY_EASE }}
+                className="relative h-full w-full"
+              >
+                <Image
+                  src={selectedImage}
+                  alt={product.title}
+                  fill
+                  priority
+                  sizes="(max-width: 1024px) 100vw, 550px"
+                  className="object-cover object-center"
+                />
+              </motion.div>
+            </AnimatePresence>
           </div>
 
           {/* Thumbnails */}
@@ -158,9 +171,18 @@ export function ProductDetailView({ product }: { product: ProductItem }) {
 
             {/* Price display */}
             <div className="my-5 flex items-baseline gap-3">
-              <span className="font-serif text-2xl sm:text-3xl font-medium text-[#3D271D]">
-                {selectedVariant?.formattedPrice || product.formattedPrice}
-              </span>
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.span
+                  key={selectedVariant?.formattedPrice || product.formattedPrice}
+                  initial={{ opacity: 0, y: 4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -4 }}
+                  transition={{ duration: 0.2, ease: LUXURY_EASE }}
+                  className="font-serif text-2xl sm:text-3xl font-medium text-[#3D271D]"
+                >
+                  {selectedVariant?.formattedPrice || product.formattedPrice}
+                </motion.span>
+              </AnimatePresence>
               {product.formattedCompareAtPrice && (
                 <span className="text-sm text-[#8E7B6F] line-through font-sans">
                   {product.formattedCompareAtPrice}
@@ -282,12 +304,8 @@ export function ProductDetailView({ product }: { product: ProductItem }) {
           {/* Accordions */}
           <div className="mt-8 border-t border-[#3D271D]/20 divide-y divide-[#3D271D]/20">
             {/* 1. Key Actives & Botanicals */}
-            <details className="group py-4" open>
-              <summary className="flex cursor-pointer items-center justify-between text-sm font-sans font-medium text-[#3D271D] select-none">
-                <span>Key Actives & Ingredients</span>
-                <Plus size={15} className="transition-transform group-open:rotate-45" />
-              </summary>
-              <div className="pt-3 pb-2 text-xs text-[#685346] leading-relaxed space-y-3">
+            <AnimatedAccordion title="Key Actives & Ingredients" defaultOpen>
+              <div className="text-xs text-[#685346] leading-relaxed space-y-3">
                 <ul className="space-y-2.5">
                   {product.keyActives.map((active, i) => (
                     <li key={i} className="border-l-2 border-[#E7DDD2] pl-3">
@@ -319,41 +337,29 @@ export function ProductDetailView({ product }: { product: ProductItem }) {
                   <Leaf size={13} className="text-[#C3A27B]" /> Explore Ingredient Library
                 </Link>
               </div>
-            </details>
+            </AnimatedAccordion>
 
             {/* 2. Full Ingredients (INCI) */}
-            <details className="group py-4">
-              <summary className="flex cursor-pointer items-center justify-between text-sm font-sans font-medium text-[#3D271D] select-none">
-                <span>Full Ingredients (INCI)</span>
-                <Plus size={15} className="transition-transform group-open:rotate-45" />
-              </summary>
-              <div className="pt-3 pb-2 text-xs text-[#685346] leading-relaxed">
+            <AnimatedAccordion title="Full Ingredients (INCI)">
+              <div className="text-xs text-[#685346] leading-relaxed">
                 <p>{product.inci}</p>
               </div>
-            </details>
+            </AnimatedAccordion>
 
             {/* 3. How to Use */}
-            <details className="group py-4">
-              <summary className="flex cursor-pointer items-center justify-between text-sm font-sans font-medium text-[#3D271D] select-none">
-                <span>Directions for Use</span>
-                <Plus size={15} className="transition-transform group-open:rotate-45" />
-              </summary>
-              <div className="pt-3 pb-2 text-xs text-[#685346] leading-relaxed">
+            <AnimatedAccordion title="Directions for Use">
+              <div className="text-xs text-[#685346] leading-relaxed">
                 <ol className="list-decimal pl-5 space-y-1.5">
                   {product.howToUse.map((step, i) => (
                     <li key={i}>{step}</li>
                   ))}
                 </ol>
               </div>
-            </details>
+            </AnimatedAccordion>
 
             {/* 4. Caution & Storage */}
-            <details className="group py-4">
-              <summary className="flex cursor-pointer items-center justify-between text-sm font-sans font-medium text-[#3D271D] select-none">
-                <span>Caution & Storage Advice</span>
-                <Plus size={15} className="transition-transform group-open:rotate-45" />
-              </summary>
-              <div className="pt-3 pb-2 text-xs text-[#685346] leading-relaxed space-y-2">
+            <AnimatedAccordion title="Caution & Storage Advice">
+              <div className="text-xs text-[#685346] leading-relaxed space-y-2">
                 <p className="flex items-start gap-2">
                   <ShieldAlert size={14} className="shrink-0 mt-0.5 text-[#5A3825]" />
                   <span>
@@ -367,36 +373,40 @@ export function ProductDetailView({ product }: { product: ProductItem }) {
                   {product.storage || 'Store in a cool, dry place away from direct sunlight.'}
                 </p>
               </div>
-            </details>
+            </AnimatedAccordion>
           </div>
         </div>
       </div>
 
       {/* Related Essentials Row */}
       <div className="mt-20 pt-12 border-t border-[#3D271D]/15">
-        <div className="mb-8 flex items-end justify-between">
-          <div>
-            <p className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.24em] text-[#685346]">
-              COMPLEMENTARY CARE
-            </p>
-            <h2 className="mt-2 font-serif text-3xl font-medium text-[#3D271D]">
-              Complete your daily ritual.
-            </h2>
+        <Reveal>
+          <div className="mb-8 flex items-end justify-between">
+            <div>
+              <p className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.24em] text-[#685346]">
+                COMPLEMENTARY CARE
+              </p>
+              <h2 className="mt-2 font-serif text-3xl font-medium text-[#3D271D]">
+                Complete your daily ritual.
+              </h2>
+            </div>
+            <Link
+              href="/shop"
+              className="inline-flex items-center gap-1.5 text-xs uppercase tracking-wider text-[#3D271D] hover:text-[#5A3825] font-semibold"
+            >
+              <span>View all</span>
+              <ArrowUpRight size={14} />
+            </Link>
           </div>
-          <Link
-            href="/shop"
-            className="inline-flex items-center gap-1.5 text-xs uppercase tracking-wider text-[#3D271D] hover:text-[#5A3825] font-semibold"
-          >
-            <span>View all</span>
-            <ArrowUpRight size={14} />
-          </Link>
-        </div>
+        </Reveal>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+        <StaggerGroup className="grid grid-cols-1 sm:grid-cols-3 gap-6">
           {relatedProducts.map((rel, index) => (
-            <ProductCard key={rel.id} product={rel} index={index} />
+            <StaggerItem key={rel.id}>
+              <ProductCard product={rel} index={index} />
+            </StaggerItem>
           ))}
-        </div>
+        </StaggerGroup>
       </div>
     </div>
   );

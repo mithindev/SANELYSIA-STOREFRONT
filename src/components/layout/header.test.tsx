@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { Header } from './header';
 
 describe('Header component', () => {
@@ -18,7 +18,7 @@ describe('Header component', () => {
     expect(screen.getByRole('link', { name: 'FIND YOUR RITUAL' })).toBeInTheDocument();
   });
 
-  it('toggles mobile drawer navigation on hamburger click', () => {
+  it('toggles mobile drawer navigation on hamburger click', async () => {
     render(<Header />);
     const toggleBtn = screen.getByLabelText('Open Menu');
     expect(toggleBtn).toBeInTheDocument();
@@ -28,6 +28,8 @@ describe('Header component', () => {
     expect(screen.getByRole('dialog', { name: 'Navigation Menu' })).toBeInTheDocument();
 
     fireEvent.click(screen.getByLabelText('Close Menu'));
-    expect(screen.queryByRole('dialog', { name: 'Navigation Menu' })).not.toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.queryByRole('dialog', { name: 'Navigation Menu' })).not.toBeInTheDocument();
+    });
   });
 });

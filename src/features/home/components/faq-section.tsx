@@ -1,6 +1,7 @@
 import * as React from 'react';
-import { Plus } from 'lucide-react';
 import { faqs } from '@/data/faqs';
+import { Reveal } from '@/components/motion';
+import { FaqAccordion } from './faq-accordion';
 
 export function FaqSection() {
   return (
@@ -19,7 +20,7 @@ export function FaqSection() {
       </div>
 
       <div className="mx-auto w-full max-w-[1320px] px-6 md:px-10 lg:px-16 grid gap-10 lg:grid-cols-[.8fr_1.5fr] lg:gap-20">
-        <div>
+        <Reveal>
           <p className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.24em] text-[#685346]">
             A little clarity
           </p>
@@ -38,32 +39,11 @@ export function FaqSection() {
               care@sanelysia.com
             </a>
           </p>
-        </div>
+        </Reveal>
 
-        <div>
-          {faqs.map((faq, index) => (
-            <details
-              key={faq.question}
-              className="group border-b border-[#3D271D]/20 last:border-b-0"
-            >
-              <summary className="flex min-h-[72px] cursor-pointer list-none items-center justify-between gap-5 py-5 transition-colors group-hover:text-[#5A3825]">
-                <span className="flex items-start gap-4">
-                  <span className="pt-0.5 text-[10px] font-mono text-[#8E7B6F]">0{index + 1}</span>
-                  <span className="font-serif text-base sm:text-lg text-[#3D271D] font-normal">
-                    {faq.question}
-                  </span>
-                </span>
-                <Plus
-                  size={16}
-                  className="details-plus shrink-0 transition-transform duration-200 group-open:rotate-45 text-[#3D271D]"
-                />
-              </summary>
-              <p className="pb-6 pl-8 pr-4 text-sm leading-relaxed text-[#685346]">
-                {faq.answer}
-              </p>
-            </details>
-          ))}
-        </div>
+        <Reveal delay={0.1}>
+          <FaqAccordion items={faqs} />
+        </Reveal>
       </div>
     </section>
   );

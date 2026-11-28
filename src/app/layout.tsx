@@ -6,6 +6,7 @@ import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { CartProvider } from '@/components/cart/cart-context';
 import { CartDrawer } from '@/components/cart/cart-drawer';
+import { MotionProvider } from '@/components/motion';
 
 const cormorant = Cormorant_Garamond({
   subsets: ['latin'],
@@ -82,15 +83,18 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${cormorant.variable} ${inter.variable}`}>
       <body className="min-h-screen flex flex-col font-sans bg-[#FAF7F2] text-[#3D271D] selection:bg-[#F5D5B8] selection:text-[#3D271D]">
-        <CartProvider>
-          <AnnouncementBar />
-          <Header />
-          <main id="main-content" className="flex-1">
-            {children}
-          </main>
-          <Footer />
-          <CartDrawer />
-        </CartProvider>
+        <div aria-hidden="true" className="paper-grain" />
+        <MotionProvider>
+          <CartProvider>
+            <AnnouncementBar />
+            <Header />
+            <main id="main-content" className="flex-1">
+              {children}
+            </main>
+            <Footer />
+            <CartDrawer />
+          </CartProvider>
+        </MotionProvider>
       </body>
     </html>
   );

@@ -3,13 +3,16 @@
 import * as React from 'react';
 import Link from 'next/link';
 import { ArrowRight, ArrowLeft, Check, Leaf } from 'lucide-react';
+import { AnimatePresence, motion } from 'motion/react';
 import { quizQuestions } from '@/data/quiz';
 import { catalogProducts, ProductItem } from '@/data/catalog';
 import { ProductCard } from '@/components/ui/product-card';
 import { Button } from '@/components/ui/button';
+import { MarkerHighlight, LUXURY_EASE } from '@/components/motion';
 
 export function SkinQuizView() {
   const [step, setStep] = React.useState(0);
+  const [direction, setDirection] = React.useState(1);
   const [answers, setAnswers] = React.useState<string[]>([]);
 
   const isDone = step === quizQuestions.length;
@@ -135,7 +138,10 @@ export function SkinQuizView() {
             THE SAN ELYSIA SKIN DIAGNOSTIC
           </p>
           <h1 className="mt-3 font-serif text-4xl sm:text-5xl font-medium text-[#3D271D]">
-            Let’s find <span className="marker italic font-normal text-[#3D271D]">your ritual.</span>
+            Let’s find{' '}
+            <MarkerHighlight immediate delay={0.25} className="italic font-normal text-[#3D271D]">
+              your ritual.
+            </MarkerHighlight>
           </h1>
           <p className="mt-4 text-sm leading-relaxed text-[#685346]">
             Answer 4 quick questions to match your skin concern and tolerance with our targeted
@@ -160,60 +166,76 @@ export function SkinQuizView() {
           </div>
 
           {/* Question Card */}
-          <fieldset className="mt-10">
-            <legend className="font-serif text-2xl sm:text-3xl text-[#3D271D] font-normal">
-              {currentQuestion.title}
-            </legend>
-            <p className="mt-2 text-xs leading-relaxed text-[#685346]">
-              {currentQuestion.caption}
-            </p>
+          <AnimatePresence mode="wait" custom={direction}>
+            <motion.fieldset
+              key={step}
+              custom={direction}
+              initial={{ opacity: 0, x: direction * 24 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: direction * -24 }}
+              transition={{ duration: 0.3, ease: LUXURY_EASE }}
+              className="mt-10"
+            >
+              <legend className="font-serif text-2xl sm:text-3xl text-[#3D271D] font-normal">
+                {currentQuestion.title}
+              </legend>
+              <p className="mt-2 text-xs leading-relaxed text-[#685346]">
+                {currentQuestion.caption}
+              </p>
 
-            <div className="mt-6 grid gap-3.5 sm:grid-cols-2">
-              {currentQuestion.options.map((opt) => {
-                const isSelected = answers[step] === opt.value;
-                return (
-                  <label
-                    key={opt.value}
-                    className={`relative flex min-h-[110px] cursor-pointer items-start gap-3 rounded-xs border p-5 transition-all ${
-                      isSelected
-                        ? 'border-[#3D271D] bg-[#F3ECE2] shadow-xs'
-                        : 'border-[#E7DDD2] bg-[#FFFDF9] hover:border-[#3D271D]/40'
-                    }`}
-                  >
-                    <input
-                      type="radio"
-                      name={`quiz-step-${step}`}
-                      value={opt.value}
-                      checked={isSelected}
-                      onChange={() => {
-                        const next = [...answers];
-                        next[step] = opt.value;
-                        setAnswers(next);
-                      }}
-                      className="mt-1 accent-[#5A3825]"
-                    />
-                    <div>
-                      <span className="block font-serif text-lg text-[#3D271D] leading-tight">
-                        {opt.title}
-                      </span>
-                      <span className="mt-1.5 block text-xs leading-relaxed text-[#685346]">
-                        {opt.body}
-                      </span>
-                    </div>
-                    {isSelected && (
-                      <Check size={14} className="absolute right-3.5 top-3.5 text-[#5A3825]" />
-                    )}
-                  </label>
-                );
-              })}
-            </div>
-          </fieldset>
+              <div className="mt-6 grid gap-3.5 sm:grid-cols-2">
+                {currentQuestion.options.map((opt) => {
+                  const isSelected = answers[step] === opt.value;
+                  return (
+                    <motion.label
+                      key={opt.value}
+                      whileHover={{ y: -2 }}
+                      whileTap={{ scale: 0.99 }}
+                      transition={{ duration: 0.18, ease: LUXURY_EASE }}
+                      className={`relative flex min-h-[110px] cursor-pointer items-start gap-3 rounded-xs border p-5 transition-colors ${
+                        isSelected
+                          ? 'border-[#3D271D] bg-[#F3ECE2] shadow-xs'
+                          : 'border-[#E7DDD2] bg-[#FFFDF9] hover:border-[#3D271D]/40'
+                      }`}
+                    >
+                      <input
+                        type="radio"
+                        name={`quiz-step-${step}`}
+                        value={opt.value}
+                        checked={isSelected}
+                        onChange={() => {
+                          const next = [...answers];
+                          next[step] = opt.value;
+                          setAnswers(next);
+                        }}
+                        className="mt-1 accent-[#5A3825]"
+                      />
+                      <div>
+                        <span className="block font-serif text-lg text-[#3D271D] leading-tight">
+                          {opt.title}
+                        </span>
+                        <span className="mt-1.5 block text-xs leading-relaxed text-[#685346]">
+                          {opt.body}
+                        </span>
+                      </div>
+                      {isSelected && (
+                        <Check size={14} className="absolute right-3.5 top-3.5 text-[#5A3825]" />
+                      )}
+                    </motion.label>
+                  );
+                })}
+              </div>
+            </motion.fieldset>
+          </AnimatePresence>
 
           {/* Stepper Buttons */}
           <div className="mt-8 flex justify-between gap-4">
             <button
               type="button"
-              onClick={() => setStep(step - 1)}
+              onClick={() => {
+                setDirection(-1);
+                setStep(step - 1);
+              }}
               disabled={step === 0}
               className="inline-flex min-h-12 items-center gap-2 border border-[#3D271D]/25 bg-transparent px-5 py-3 text-[11px] font-bold uppercase tracking-[0.14em] text-[#3D271D] rounded-sm hover:border-[#3D271D] disabled:opacity-30 cursor-pointer disabled:cursor-not-allowed"
             >
@@ -221,7 +243,10 @@ export function SkinQuizView() {
             </button>
             <button
               type="button"
-              onClick={() => setStep(step + 1)}
+              onClick={() => {
+                setDirection(1);
+                setStep(step + 1);
+              }}
               disabled={!answers[step]}
               className="inline-flex min-h-12 items-center gap-2 bg-[#5A3825] px-6 py-3 text-[11px] font-bold uppercase tracking-[0.15em] text-[#FAF7F2] rounded-sm hover:bg-[#3D271D] disabled:opacity-40 cursor-pointer disabled:cursor-not-allowed"
             >

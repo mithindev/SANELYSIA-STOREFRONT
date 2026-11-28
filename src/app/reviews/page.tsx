@@ -2,9 +2,11 @@
 
 import * as React from 'react';
 import { Star, ArrowRight, Check } from 'lucide-react';
+import { AnimatePresence, motion } from 'motion/react';
 import { reviews } from '@/data/reviews';
 import { catalogProducts } from '@/data/catalog';
 import { Button } from '@/components/ui/button';
+import { Reveal, MarkerHighlight, LUXURY_EASE } from '@/components/motion';
 
 const singleProducts = catalogProducts.filter((p) => p.category !== 'bundles');
 
@@ -31,27 +33,32 @@ export default function ReviewsPage() {
 
   return (
     <div className="mx-auto w-full max-w-[1320px] px-6 md:px-10 lg:px-16 py-14 lg:py-20">
-      <p className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.24em] text-[#685346]">
-        COMMUNITY VOICES
-      </p>
-      <div className="mt-4 flex flex-wrap items-end justify-between gap-6">
-        <div>
-          <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-medium tracking-tight text-[#3D271D]">
-            Community <span className="marker italic font-normal text-[#3D271D]">stories.</span>
-          </h1>
-          <p className="mt-3 text-sm text-[#685346] max-w-md leading-relaxed">
-            Honest reflections from everyday routines with our serums and overnight brightening care.
-          </p>
-        </div>
+      <Reveal immediate>
+        <p className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.24em] text-[#685346]">
+          COMMUNITY VOICES
+        </p>
+        <div className="mt-4 flex flex-wrap items-end justify-between gap-6">
+          <div>
+            <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-medium tracking-tight text-[#3D271D]">
+              Community{' '}
+              <MarkerHighlight immediate delay={0.28} className="italic font-normal text-[#3D271D]">
+                stories.
+              </MarkerHighlight>
+            </h1>
+            <p className="mt-3 text-sm text-[#685346] max-w-md leading-relaxed">
+              Honest reflections from everyday routines with our serums and overnight brightening care.
+            </p>
+          </div>
 
-        <button
-          onClick={() => setShowSubmitModal(true)}
-          className="inline-flex min-h-12 items-center gap-2 bg-[#5A3825] px-6 py-3 text-[11px] font-bold uppercase tracking-[0.15em] text-[#FAF7F2] rounded-sm hover:bg-[#3D271D] cursor-pointer"
-        >
-          <span>Share your experience</span>
-          <ArrowRight size={14} />
-        </button>
-      </div>
+          <button
+            onClick={() => setShowSubmitModal(true)}
+            className="btn-sheen inline-flex min-h-12 items-center gap-2 bg-[#5A3825] px-6 py-3 text-[11px] font-bold uppercase tracking-[0.15em] text-[#FAF7F2] rounded-sm hover:bg-[#3D271D] cursor-pointer"
+          >
+            <span>Share your experience</span>
+            <ArrowRight size={14} />
+          </button>
+        </div>
+      </Reveal>
 
       {/* Analytics & Filters Bar */}
       <div className="mt-12 flex flex-wrap items-center justify-between gap-6 border-y border-[#3D271D]/20 py-6">
@@ -96,8 +103,17 @@ export default function ReviewsPage() {
 
       {/* Reviews List */}
       <div className="divide-y divide-[#3D271D]/20">
-        {filteredReviews.map((rev) => (
-          <article key={rev.id} className="grid gap-6 py-10 sm:grid-cols-[1fr_2fr]">
+        <AnimatePresence mode="popLayout">
+          {filteredReviews.map((rev) => (
+            <motion.article
+              key={rev.id}
+              layout
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3, ease: LUXURY_EASE }}
+              className="grid gap-6 py-10 sm:grid-cols-[1fr_2fr]"
+            >
             <div>
               <p className="font-serif text-2xl text-[#3D271D]">{rev.name}</p>
               <div className="mt-2 flex items-center gap-1.5 text-xs text-[#8E7B6F]">
@@ -120,18 +136,30 @@ export default function ReviewsPage() {
               <p className="mt-3 text-sm leading-relaxed text-[#685346]">{rev.body}</p>
               <p className="mt-4 text-[10px] text-[#8E7B6F] uppercase tracking-wider">{rev.date}</p>
             </div>
-          </article>
-        ))}
+            </motion.article>
+          ))}
+        </AnimatePresence>
       </div>
 
       {/* Review submission modal */}
-      {showSubmitModal && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#3D271D]/40 backdrop-blur-xs"
-        >
-          <div className="w-full max-w-lg bg-[#FAF7F2] border border-[#E7DDD2] p-8 rounded-sm shadow-2xl space-y-5">
+      <AnimatePresence>
+        {showSubmitModal && (
+          <motion.div
+            role="dialog"
+            aria-modal="true"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.22 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#3D271D]/40 backdrop-blur-xs"
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.96, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.96, y: 10 }}
+              transition={{ duration: 0.28, ease: LUXURY_EASE }}
+              className="w-full max-w-lg bg-[#FAF7F2] border border-[#E7DDD2] p-8 rounded-sm shadow-2xl space-y-5"
+            >
             <h2 className="font-serif text-2xl text-[#3D271D]">Share your ritual story</h2>
             {formSubmitted ? (
               <div className="text-center py-6">
@@ -205,9 +233,10 @@ export default function ReviewsPage() {
                 </div>
               </form>
             )}
-          </div>
-        </div>
-      )}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

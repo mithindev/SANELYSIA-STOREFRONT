@@ -4,9 +4,11 @@ import * as React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight, Minus, Plus, Trash2, ShoppingBag, ShieldCheck, Tag } from 'lucide-react';
+import { AnimatePresence, motion } from 'motion/react';
 import { useCart } from '@/components/cart/cart-context';
 import { Button } from '@/components/ui/button';
 import { formatPaise } from '@/lib/utils/cn';
+import { LUXURY_EASE } from '@/components/motion';
 
 const FREE_SHIPPING_THRESHOLD_PAISE = 250000;
 
@@ -95,8 +97,17 @@ export default function CartPage() {
           {/* Left: Items list */}
           <div>
             <div className="border-t border-[#3D271D]/20 divide-y divide-[#3D271D]/20">
-              {items.map((item) => (
-                <article key={item.id} className="py-6 flex gap-6">
+              <AnimatePresence initial={false}>
+                {items.map((item) => (
+                  <motion.article
+                    key={item.id}
+                    layout
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, x: -20, transition: { duration: 0.2 } }}
+                    transition={{ duration: 0.3, ease: LUXURY_EASE }}
+                    className="py-6 flex gap-6"
+                  >
                   <Link
                     href={`/product/${item.slug}`}
                     className="relative w-24 sm:w-28 aspect-[4/5] rounded-xs overflow-hidden bg-[#F3ECE2] border border-[#E7DDD2] shrink-0"
@@ -159,8 +170,9 @@ export default function CartPage() {
                       </button>
                     </div>
                   </div>
-                </article>
+                </motion.article>
               ))}
+              </AnimatePresence>
             </div>
 
             <div className="mt-6 flex items-center justify-between pt-4 border-t border-[#3D271D]/15">
@@ -198,21 +210,50 @@ export default function CartPage() {
             <div className="space-y-3 border-y border-[#3D271D]/20 py-5 text-sm text-[#3D271D]">
               <div className="flex justify-between">
                 <span className="text-[#685346]">Subtotal</span>
-                <span className="font-medium">{formattedTotal}</span>
+                <AnimatePresence mode="wait" initial={false}>
+                  <motion.span
+                    key={formattedTotal}
+                    initial={{ opacity: 0, y: 4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -4 }}
+                    transition={{ duration: 0.18, ease: LUXURY_EASE }}
+                    className="font-medium"
+                  >
+                    {formattedTotal}
+                  </motion.span>
+                </AnimatePresence>
               </div>
-              {appliedCoupon && (
-                <div className="flex justify-between text-[#5A3825]">
-                  <span>Discount ({appliedCoupon})</span>
-                  <span>- {formatPaise(discountPaise)}</span>
-                </div>
-              )}
+              <AnimatePresence>
+                {appliedCoupon && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    transition={{ duration: 0.24, ease: LUXURY_EASE }}
+                    className="flex justify-between text-[#5A3825] overflow-hidden"
+                  >
+                    <span>Discount ({appliedCoupon})</span>
+                    <span>- {formatPaise(discountPaise)}</span>
+                  </motion.div>
+                )}
+              </AnimatePresence>
               <div className="flex justify-between">
                 <span className="text-[#685346]">Insured Delivery</span>
                 <span>{freeShipping ? 'FREE' : '₹150'}</span>
               </div>
               <div className="flex justify-between pt-3 border-t border-[#3D271D]/15 text-base font-semibold text-[#3D271D]">
                 <span>Total</span>
-                <span>{formatPaise(finalTotalPaise + (freeShipping ? 0 : 15000))}</span>
+                <AnimatePresence mode="wait" initial={false}>
+                  <motion.span
+                    key={finalTotalPaise + (freeShipping ? 0 : 15000)}
+                    initial={{ opacity: 0, y: 4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -4 }}
+                    transition={{ duration: 0.18, ease: LUXURY_EASE }}
+                  >
+                    {formatPaise(finalTotalPaise + (freeShipping ? 0 : 15000))}
+                  </motion.span>
+                </AnimatePresence>
               </div>
             </div>
 

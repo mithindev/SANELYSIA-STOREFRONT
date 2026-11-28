@@ -4,9 +4,11 @@ import * as React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { X, Minus, Plus, Trash2, ArrowRight, ShoppingBag } from 'lucide-react';
+import { AnimatePresence, motion } from 'motion/react';
 import { useCart } from './cart-context';
 import { Button } from '@/components/ui/button';
 import { formatPaise } from '@/lib/utils/cn';
+import { LUXURY_EASE } from '@/components/motion';
 
 const FREE_SHIPPING_THRESHOLD_PAISE = 250000; // ₹2,500
 
@@ -31,27 +33,37 @@ export function CartDrawer() {
     };
   }, [isOpen, closeCart]);
 
-  if (!isOpen) return null;
-
   const freeShippingProgress = Math.min(100, (totalPaise / FREE_SHIPPING_THRESHOLD_PAISE) * 100);
   const remainingForFreeShipping = Math.max(0, FREE_SHIPPING_THRESHOLD_PAISE - totalPaise);
 
   return (
-    <div
-      role="dialog"
-      aria-modal="true"
-      aria-label="Your shopping bag"
-      className="fixed inset-0 z-50 overflow-hidden"
-    >
-      {/* Backdrop */}
-      <div
-        onClick={closeCart}
-        aria-hidden="true"
-        className="fixed inset-0 bg-[#3D271D]/40 backdrop-blur-xs transition-opacity animate-in fade-in duration-200"
-      />
+    <AnimatePresence>
+      {isOpen && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label="Your shopping bag"
+          className="fixed inset-0 z-50 overflow-hidden"
+        >
+          {/* Backdrop */}
+          <motion.div
+            onClick={closeCart}
+            aria-hidden="true"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.25 }}
+            className="fixed inset-0 bg-[#3D271D]/40 backdrop-blur-xs"
+          />
 
-      <div className="fixed inset-y-0 right-0 max-w-full flex pl-10">
-        <div className="w-screen max-w-md bg-[#FAF7F2] border-l border-[#E7DDD2] shadow-2xl flex flex-col justify-between animate-in slide-in-from-right duration-300">
+          <div className="fixed inset-y-0 right-0 max-w-full flex pl-10">
+            <motion.div
+              initial={{ x: '100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '100%' }}
+              transition={{ duration: 0.35, ease: LUXURY_EASE }}
+              className="w-screen max-w-md bg-[#FAF7F2] border-l border-[#E7DDD2] shadow-2xl flex flex-col justify-between"
+            >
           {/* Header */}
           <div className="p-6 border-b border-[#E7DDD2] bg-[#FAF7F2]">
             <div className="flex items-center justify-between">
@@ -84,9 +96,13 @@ export function CartDrawer() {
                 <span>{Math.round(freeShippingProgress)}%</span>
               </div>
               <div className="w-full bg-[#E7DDD2] h-1.5 rounded-full overflow-hidden">
-                <div
-                  className="bg-[#5A3825] h-full transition-all duration-300"
-                  style={{ width: `${freeShippingProgress}%` }}
+                <motion.div
+                  className={`h-full transition-colors duration-300 ${
+                    freeShippingProgress >= 100 ? 'bg-[#C3A27B]' : 'bg-[#5A3825]'
+                  }`}
+                  initial={false}
+                  animate={{ width: `${freeShippingProgress}%` }}
+                  transition={{ duration: 0.45, ease: LUXURY_EASE }}
                 />
               </div>
             </div>
@@ -111,8 +127,17 @@ export function CartDrawer() {
               </div>
             ) : (
               <div className="divide-y divide-[#E7DDD2]">
-                {items.map((item) => (
-                  <article key={item.id} className="py-4 flex gap-4 first:pt-0 last:pb-0">
+                <AnimatePresence initial={false}>
+                  {items.map((item) => (
+                    <motion.article
+                      key={item.id}
+                      layout
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, x: 24, transition: { duration: 0.2 } }}
+                      transition={{ duration: 0.28, ease: LUXURY_EASE }}
+                      className="py-4 flex gap-4 first:pt-0 last:pb-0"
+                    >
                     <div className="relative w-20 h-24 rounded-xs overflow-hidden bg-[#F3ECE2] border border-[#E7DDD2] shrink-0">
                       <Image
                         src={item.image}
@@ -180,8 +205,9 @@ export function CartDrawer() {
                         </button>
                       </div>
                     </div>
-                  </article>
-                ))}
+                    </motion.article>
+                  ))}
+                </AnimatePresence>
               </div>
             )}
           </div>
@@ -191,7 +217,18 @@ export function CartDrawer() {
             <div className="p-6 border-t border-[#E7DDD2] bg-[#FAF7F2] space-y-4">
               <div className="flex items-center justify-between text-sm">
                 <span className="text-[#685346] font-sans">Subtotal</span>
-                <span className="text-[#3D271D] font-semibold text-base">{formattedTotal}</span>
+                <AnimatePresence mode="wait" initial={false}>
+                  <motion.span
+                    key={formattedTotal}
+                    initial={{ opacity: 0, y: 4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -4 }}
+                    transition={{ duration: 0.18, ease: LUXURY_EASE }}
+                    className="text-[#3D271D] font-semibold text-base"
+                  >
+                    {formattedTotal}
+                  </motion.span>
+                </AnimatePresence>
               </div>
               <p className="text-[10px] text-[#8E7B6F] leading-normal">
                 Taxes and insured delivery options are calculated at secure checkout.
@@ -212,8 +249,10 @@ export function CartDrawer() {
               </div>
             </div>
           )}
+            </motion.div>
+          </div>
         </div>
-      </div>
-    </div>
+      )}
+    </AnimatePresence>
   );
 }

@@ -2,27 +2,37 @@ import * as React from 'react';
 import Link from 'next/link';
 import { ArrowRight, Sun, Moon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Reveal, MaskedLine, MarkerHighlight, StaggerGroup, StaggerItem } from '@/components/motion';
 
 export default function BenefitsPage() {
   return (
     <div className="mx-auto w-full max-w-[1320px] px-6 md:px-10 lg:px-16 py-14 lg:py-20">
-      <p className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.24em] text-[#685346]">
-        DAILY RITUAL CADENCE
-      </p>
+      <Reveal immediate>
+        <p className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.24em] text-[#685346]">
+          DAILY RITUAL CADENCE
+        </p>
+      </Reveal>
       <h1 className="mt-4 font-serif text-4xl sm:text-5xl lg:text-6xl font-medium tracking-tight text-[#3D271D]">
-        Morning radiance.
-        <br />
-        <span className="marker italic font-normal text-[#3D271D]">Overnight renewal.</span>
+        <MaskedLine immediate delay={0.05}>
+          Morning radiance.
+        </MaskedLine>
+        <MaskedLine immediate delay={0.14}>
+          <MarkerHighlight immediate delay={0.35} className="italic font-normal text-[#3D271D]">
+            Overnight renewal.
+          </MarkerHighlight>
+        </MaskedLine>
       </h1>
-      <p className="mt-4 max-w-2xl text-sm leading-relaxed text-[#685346]">
-        Align your SAN ELYSIA formulations with your skin&apos;s daily rhythm—antioxidant defense
-        and oil control by day, targeted pigmentation care and nourishing moisture every night.
-      </p>
+      <Reveal immediate delay={0.2}>
+        <p className="mt-4 max-w-2xl text-sm leading-relaxed text-[#685346]">
+          Align your SAN ELYSIA formulations with your skin&apos;s daily rhythm—antioxidant defense
+          and oil control by day, targeted pigmentation care and nourishing moisture every night.
+        </p>
+      </Reveal>
 
       {/* AM & PM Comparison Grid */}
-      <div className="mt-12 grid gap-8 md:grid-cols-2">
+      <StaggerGroup immediate delay={0.25} stagger={0.1} className="mt-12 grid gap-8 md:grid-cols-2">
         {/* Morning Routine Card */}
-        <div className="border border-[#3D271D]/20 bg-[#FAF7F2] p-8 rounded-xs shadow-xs">
+        <StaggerItem className="border border-[#3D271D]/20 bg-[#FAF7F2] p-8 rounded-xs shadow-xs">
           <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-[#5A3825]">
             <Sun size={18} className="text-[#C3A27B]" />
             <span>The Morning Glow & Balance Protocol</span>
@@ -50,10 +60,10 @@ export default function BenefitsPage() {
               <strong>3. Moisturize & Shield:</strong> Follow with your daytime moisturizer and always finish with broad-spectrum sunscreen during the day.
             </li>
           </ol>
-        </div>
+        </StaggerItem>
 
         {/* Evening Routine Card */}
-        <div className="border border-[#3D271D]/20 bg-[#F3ECE2]/80 p-8 rounded-xs shadow-xs">
+        <StaggerItem className="border border-[#3D271D]/20 bg-[#F3ECE2]/80 p-8 rounded-xs shadow-xs">
           <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-[#5A3825]">
             <Moon size={18} className="text-[#5A3825]" />
             <span>The Evening Pigmentation & Renewal Protocol</span>
@@ -85,8 +95,8 @@ export default function BenefitsPage() {
               <strong>3. Morning Follow-Through:</strong> Always wear sunscreen during the day to protect your brightening results.
             </li>
           </ol>
-        </div>
-      </div>
+        </StaggerItem>
+      </StaggerGroup>
 
       <div className="mt-14 flex flex-wrap justify-center gap-4">
         <Link href="/shop?category=bundles">

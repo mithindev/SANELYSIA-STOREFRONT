@@ -3,8 +3,10 @@
 import * as React from 'react';
 import Link from 'next/link';
 import { Search, ArrowRight } from 'lucide-react';
+import { AnimatePresence, motion } from 'motion/react';
 import { catalogProducts, SkinConcern } from '@/data/catalog';
 import { ProductCard } from '@/components/ui/product-card';
+import { Reveal, MarkerHighlight, LUXURY_EASE } from '@/components/motion';
 
 const categories = [
   { value: 'all', label: 'All Formulations' },
@@ -66,39 +68,51 @@ export function CatalogView({ initialCategory = 'all' }: { initialCategory?: str
   return (
     <div className="mx-auto w-full max-w-[1320px] px-6 md:px-10 lg:px-16 py-14 lg:py-20">
       {/* Header */}
-      <p className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.24em] text-[#685346]">
-        THE SAN ELYSIA COLLECTION
-      </p>
-      <div className="mt-4 flex flex-wrap items-end justify-between gap-6">
-        <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-medium tracking-tight text-[#3D271D]">
-          Targeted actives,
-          <br />
-          <span className="marker italic font-normal text-[#3D271D]">for everyday clarity.</span>
-        </h1>
-        <p className="max-w-[380px] text-sm leading-relaxed text-[#685346]">
-          Four targeted brightening and oil-balancing serums paired with an intensive overnight
-          renewal cream — formulated for visible tone harmony and barrier comfort.
+      <Reveal immediate>
+        <p className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.24em] text-[#685346]">
+          THE SAN ELYSIA COLLECTION
         </p>
-      </div>
+        <div className="mt-4 flex flex-wrap items-end justify-between gap-6">
+          <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-medium tracking-tight text-[#3D271D]">
+            Targeted actives,
+            <br />
+            <MarkerHighlight immediate delay={0.28} className="italic font-normal text-[#3D271D]">
+              for everyday clarity.
+            </MarkerHighlight>
+          </h1>
+          <p className="max-w-[380px] text-sm leading-relaxed text-[#685346]">
+            Four targeted brightening and oil-balancing serums paired with an intensive overnight
+            renewal cream — formulated for visible tone harmony and barrier comfort.
+          </p>
+        </div>
+      </Reveal>
 
       {/* Category Tabs */}
       <nav
         aria-label="Product categories"
         className="mt-10 flex flex-wrap gap-x-7 gap-y-2 border-b border-[#3D271D]/20"
       >
-        {categories.map((cat) => (
-          <button
-            key={cat.value}
-            onClick={() => setSelectedCategory(cat.value)}
-            className={`min-h-12 border-b-2 py-3 text-[11px] font-semibold uppercase tracking-[0.14em] transition-colors cursor-pointer ${
-              selectedCategory === cat.value
-                ? 'border-[#3D271D] text-[#3D271D]'
-                : 'border-transparent text-[#8E7B6F] hover:text-[#3D271D]'
-            }`}
-          >
-            {cat.label}
-          </button>
-        ))}
+        {categories.map((cat) => {
+          const isActive = selectedCategory === cat.value;
+          return (
+            <button
+              key={cat.value}
+              onClick={() => setSelectedCategory(cat.value)}
+              className={`relative min-h-12 py-3 text-[11px] font-semibold uppercase tracking-[0.14em] transition-colors cursor-pointer ${
+                isActive ? 'text-[#3D271D]' : 'text-[#8E7B6F] hover:text-[#3D271D]'
+              }`}
+            >
+              {cat.label}
+              {isActive && (
+                <motion.span
+                  layoutId="catalog-active-tab"
+                  transition={{ duration: 0.3, ease: LUXURY_EASE }}
+                  className="absolute inset-x-0 -bottom-[1px] h-[2px] bg-[#3D271D]"
+                />
+              )}
+            </button>
+          );
+        })}
       </nav>
 
       {/* Skin Concern Pills */}
@@ -163,11 +177,25 @@ export function CatalogView({ initialCategory = 'all' }: { initialCategory?: str
 
       {/* Grid or Empty */}
       {filteredProducts.length > 0 ? (
-        <div className="grid grid-cols-2 gap-x-5 gap-y-12 lg:grid-cols-3 lg:gap-x-8">
-          {filteredProducts.map((product, index) => (
-            <ProductCard key={product.id} product={product} index={index} />
-          ))}
-        </div>
+        <motion.div
+          layout
+          className="grid grid-cols-2 gap-x-5 gap-y-12 lg:grid-cols-3 lg:gap-x-8"
+        >
+          <AnimatePresence mode="popLayout">
+            {filteredProducts.map((product, index) => (
+              <motion.div
+                key={product.id}
+                layout
+                initial={{ opacity: 0, y: 14 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.96 }}
+                transition={{ duration: 0.32, ease: LUXURY_EASE }}
+              >
+                <ProductCard product={product} index={index} />
+              </motion.div>
+            ))}
+          </AnimatePresence>
+        </motion.div>
       ) : (
         <div className="py-20 text-center">
           <h2 className="font-serif text-3xl text-[#3D271D]">No formulations match that filter.</h2>
